@@ -12,84 +12,101 @@ using SocketType = System.Net.Internals.SocketType;
 
 namespace System.Net
 {
-    internal class SocketProtocolSupportPal
+    internal partial class SocketProtocolSupportPal
     {
-        private static bool s_ipv4 = true;
-        private static bool s_ipv6 = true;
+        internal static class Windows
+        {
+            private static bool s_ipv4 = true;
+            private static bool s_ipv6 = true;
 
-        private static bool s_initialized;
-        private static readonly object s_initializedLock = new object();
+            private static bool s_initialized;
+            private static readonly object s_initializedLock = new object();
 
+            public static bool OSSupportsIPv6
+            {
+                get
+                {
+                    EnsureInitialized();
+                    return s_ipv6;
+                }
+            }
+
+            public static bool OSSupportsIPv4
+            {
+                get
+                {
+                    EnsureInitialized();
+                    return s_ipv4;
+                }
+            }
+
+            private static void EnsureInitialized()
+            {
+                if (!Volatile.Read(ref s_initialized))
+                {
+                    lock (s_initializedLock)
+                    {
+                        if (!s_initialized)
+                        {
+                            s_ipv4 = IsProtocolSupported(AddressFamily.InterNetwork);
+                            s_ipv6 = IsProtocolSupported(AddressFamily.InterNetworkV6);
+
+                            Volatile.Write(ref s_initialized, true);
+                        }
+                    }
+                }
+            }
+
+            private static bool IsProtocolSupported(AddressFamily af)
+            {
+                SocketError errorCode;
+                IntPtr s = IntPtr.Zero;
+                bool ret = true;
+
+                try
+                {
+                    s = Interop.Windows.Winsock.WSASocketW(af, SocketType.Dgram, 0, IntPtr.Zero, 0, 0);
+
+                    if (s == IntPtr.Zero)
+                    {
+                        errorCode = (SocketError)Marshal.GetLastWin32Error();
+                        if (errorCode == SocketError.AddressFamilyNotSupported)
+                        {
+                            ret = false;
+                        }
+                    }
+                }
+                finally
+                {
+                    if (s != IntPtr.Zero)
+                    {
+                        SocketError closeResult = Interop.Windows.Winsock.closesocket(s);
+    #if DEBUG
+                        if (closeResult != SocketError.Success)
+                        {
+                            errorCode = (SocketError)Marshal.GetLastWin32Error();
+                            Debug.Fail("Failed to detect " + af.ToString() + " protocol: " + errorCode.ToString());
+                        }
+    #endif
+                    }
+                }
+
+                return ret;
+            }
+        }
+
+#if !MONO
         public static bool OSSupportsIPv6
         {
-            get
-            {
-                EnsureInitialized();
-                return s_ipv6;
-            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Windows.OSSupportsIPv6; }
         }
 
         public static bool OSSupportsIPv4
         {
-            get
-            {
-                EnsureInitialized();
-                return s_ipv4;
-            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Windows.OSSupportsIPv4; }
         }
-
-        private static void EnsureInitialized()
-        {
-            if (!Volatile.Read(ref s_initialized))
-            {
-                lock (s_initializedLock)
-                {
-                    if (!s_initialized)
-                    {
-                        s_ipv4 = IsProtocolSupported(AddressFamily.InterNetwork);
-                        s_ipv6 = IsProtocolSupported(AddressFamily.InterNetworkV6);
-
-                        Volatile.Write(ref s_initialized, true);
-                    }
-                }
-            }
-        }
-
-        private static bool IsProtocolSupported(AddressFamily af)
-        {
-            SocketError errorCode;
-            IntPtr s = IntPtr.Zero;
-            bool ret = true;
-
-            try
-            {
-                s = Interop.Winsock.WSASocketW(af, SocketType.Dgram, 0, IntPtr.Zero, 0, 0);
-
-                if (s == IntPtr.Zero)
-                {
-                    errorCode = (SocketError)Marshal.GetLastWin32Error();
-                    if (errorCode == SocketError.AddressFamilyNotSupported)
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            finally
-            {
-                if (s != IntPtr.Zero)
-                {
-                    SocketError closeResult = Interop.Winsock.closesocket(s);
-#if DEBUG
-                    if (closeResult != SocketError.Success)
-                    {
-                        errorCode = (SocketError)Marshal.GetLastWin32Error();
-                        Debug.Fail("Failed to detect " + af.ToString() + " protocol: " + errorCode.ToString());
-                    }
 #endif
-                }
-            }
-
-            return ret;
-        }
     }
 }

@@ -18,9 +18,12 @@ namespace System.Net.Sockets
         SafeHandleMinusOneIsInvalid
 #endif
     {
+#if !MONO
         private ThreadPoolBoundHandle _iocpBoundHandle;
         private object _iocpBindingLock = new object();
+#endif
 
+#if !MONO
         public ThreadPoolBoundHandle IOCPBoundHandle
         {
             get
@@ -28,7 +31,9 @@ namespace System.Net.Sockets
                 return _iocpBoundHandle;
             }
         }
+#endif
 
+#if !MONO
         // Binds the Socket Win32 Handle to the ThreadPool's CompletionPort.
         public ThreadPoolBoundHandle GetOrAllocateThreadPoolBoundHandle()
         {
@@ -68,25 +73,59 @@ namespace System.Net.Sockets
 
             return _iocpBoundHandle;
         }
+#endif
 
+        internal static partial class Windows
+        {
+            internal static unsafe SafeCloseSocket CreateWSASocket(byte* pinnedBuffer)
+            {
+                return SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Windows.CreateWSASocket(pinnedBuffer));
+            }
+        }
+
+#if !MONO
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe SafeCloseSocket CreateWSASocket(byte* pinnedBuffer)
         {
-            return CreateSocket(InnerSafeCloseSocket.CreateWSASocket(pinnedBuffer));
+            return Windows.CreateWSASocket (pinnedBuffer);
+        }
+#endif
+
+        internal static partial class Windows
+        {
+            internal static SafeCloseSocket CreateWSASocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+            {
+                return SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Windows.CreateWSASocket(addressFamily, socketType, protocolType));
+            }
         }
 
+#if !MONO
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static SafeCloseSocket CreateWSASocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
         {
-            return CreateSocket(InnerSafeCloseSocket.CreateWSASocket(addressFamily, socketType, protocolType));
+            return Windows.CreateWSASocket(addressFamily, socketType, protocolType);
+        }
+#endif
+
+        internal static partial class Windows
+        {
+            internal static SafeCloseSocket Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressSize)
+            {
+                return SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Windows.Accept(socketHandle, socketAddress, ref socketAddressSize));
+            }
         }
 
+#if !MONO
         internal static SafeCloseSocket Accept(
             SafeCloseSocket socketHandle,
             byte[] socketAddress,
             ref int socketAddressSize)
         {
-            return CreateSocket(InnerSafeCloseSocket.Accept(socketHandle, socketAddress, ref socketAddressSize));
+            return Windows.Accept(socketHandle, socketAddress, socketAddressSize);
         }
+#endif
 
+#if !MONO
         private void InnerReleaseHandle()
         {
             // Keep m_IocpBoundHandle around after disposing it to allow freeing NativeOverlapped.
@@ -96,9 +135,11 @@ namespace System.Net.Sockets
                 _iocpBoundHandle.Dispose();
             }
         }
+#endif
 
         internal sealed partial class InnerSafeCloseSocket : SafeHandleMinusOneIsInvalid
         {
+#if !MONO
             private SocketError InnerReleaseHandle()
             {
                 SocketError errorCode;
@@ -109,7 +150,7 @@ namespace System.Net.Sockets
                 if (_blockable)
                 {
                     if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"handle:{handle}, Following 'blockable' branch");
-                    errorCode = Interop.Winsock.closesocket(handle);
+                    errorCode = Interop.Windows.Winsock.closesocket(handle);
 #if DEBUG
                     _closeSocketHandle = handle;
                     _closeSocketResult = errorCode;
@@ -127,9 +168,9 @@ namespace System.Net.Sockets
                     // The socket must be non-blocking with a linger timeout set.
                     // We have to set the socket to blocking.
                     int nonBlockCmd = 0;
-                    errorCode = Interop.Winsock.ioctlsocket(
+                    errorCode = Interop.Windows.Winsock.ioctlsocket(
                         handle,
-                        Interop.Winsock.IoctlSocketConstants.FIONBIO,
+                        Interop.Windows.Winsock.IoctlSocketConstants.FIONBIO,
                         ref nonBlockCmd);
                     if (errorCode == SocketError.SocketError) errorCode = (SocketError)Marshal.GetLastWin32Error();
 
@@ -138,17 +179,17 @@ namespace System.Net.Sockets
                     // This can fail if there's a pending WSAEventSelect.  Try canceling it.
                     if (errorCode == SocketError.InvalidArgument)
                     {
-                        errorCode = Interop.Winsock.WSAEventSelect(
+                        errorCode = Interop.Windows.Winsock.WSAEventSelect(
                             handle,
                             IntPtr.Zero,
-                            Interop.Winsock.AsyncEventBits.FdNone);
+                            Interop.Windows.Winsock.AsyncEventBits.FdNone);
 
                         if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"handle:{handle}, WSAEventSelect()#1:{(errorCode == SocketError.SocketError ? (SocketError)Marshal.GetLastWin32Error() : errorCode)}");
 
                         // Now retry the ioctl.
-                        errorCode = Interop.Winsock.ioctlsocket(
+                        errorCode = Interop.Windows.Winsock.ioctlsocket(
                             handle,
-                            Interop.Winsock.IoctlSocketConstants.FIONBIO,
+                            Interop.Windows.Winsock.IoctlSocketConstants.FIONBIO,
                             ref nonBlockCmd);
 
                         if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"handle:{handle}, ioctlsocket()#2:{(errorCode == SocketError.SocketError ? (SocketError)Marshal.GetLastWin32Error() : errorCode)}");
@@ -157,7 +198,7 @@ namespace System.Net.Sockets
                     // If that succeeded, try again.
                     if (errorCode == SocketError.Success)
                     {
-                        errorCode = Interop.Winsock.closesocket(handle);
+                        errorCode = Interop.Windows.Winsock.closesocket(handle);
 #if DEBUG
                         _closeSocketHandle = handle;
                         _closeSocketResult = errorCode;
@@ -176,11 +217,11 @@ namespace System.Net.Sockets
                 }
 
                 // By default or if CloseAsIs() path failed, set linger timeout to zero to get an abortive close (RST).
-                Interop.Winsock.Linger lingerStruct;
+                Interop.Windows.Winsock.Linger lingerStruct;
                 lingerStruct.OnOff = 1;
                 lingerStruct.Time = 0;
 
-                errorCode = Interop.Winsock.setsockopt(
+                errorCode = Interop.Windows.Winsock.setsockopt(
                     handle,
                     SocketOptionLevel.Socket,
                     SocketOptionName.Linger,
@@ -198,7 +239,7 @@ namespace System.Net.Sockets
                     return errorCode;
                 }
 
-                errorCode = Interop.Winsock.closesocket(handle);
+                errorCode = Interop.Windows.Winsock.closesocket(handle);
 #if DEBUG
                 _closeSocketHandle = handle;
                 _closeSocketResult = errorCode;
@@ -207,37 +248,70 @@ namespace System.Net.Sockets
 
                 return errorCode;
             }
+#endif
 
+            internal static partial class Windows
+            {
+                internal static unsafe InnerSafeCloseSocket CreateWSASocket(byte* pinnedBuffer)
+                {
+                    // NOTE: -1 is the value for FROM_PROTOCOL_INFO.
+                    InnerSafeCloseSocket result = Interop.Windows.Winsock.WSASocketW((AddressFamily)(-1), (SocketType)(-1), (ProtocolType)(-1), pinnedBuffer, 0, Interop.Windows.Winsock.SocketConstructorFlags.WSA_FLAG_OVERLAPPED);
+                    if (result.IsInvalid)
+                    {
+                        result.SetHandleAsInvalid();
+                    }
+                    return result;
+                }
+            }
+
+#if !MONO
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal static unsafe InnerSafeCloseSocket CreateWSASocket(byte* pinnedBuffer)
             {
-                // NOTE: -1 is the value for FROM_PROTOCOL_INFO.
-                InnerSafeCloseSocket result = Interop.Winsock.WSASocketW((AddressFamily)(-1), (SocketType)(-1), (ProtocolType)(-1), pinnedBuffer, 0, Interop.Winsock.SocketConstructorFlags.WSA_FLAG_OVERLAPPED);
-                if (result.IsInvalid)
+                return Windows.CreateWSASocket (pinnedBuffer);
+            }
+#endif
+
+            internal static partial class Windows
+            {
+                internal static InnerSafeCloseSocket CreateWSASocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
                 {
-                    result.SetHandleAsInvalid();
+                    InnerSafeCloseSocket result = Interop.Windows.Winsock.WSASocketW(addressFamily, socketType, protocolType, IntPtr.Zero, 0, Interop.Windows.Winsock.SocketConstructorFlags.WSA_FLAG_OVERLAPPED);
+                    if (result.IsInvalid)
+                    {
+                        result.SetHandleAsInvalid();
+                    }
+                    return result;
                 }
-                return result;
             }
 
+#if !MONO
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal static InnerSafeCloseSocket CreateWSASocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
             {
-                InnerSafeCloseSocket result = Interop.Winsock.WSASocketW(addressFamily, socketType, protocolType, IntPtr.Zero, 0, Interop.Winsock.SocketConstructorFlags.WSA_FLAG_OVERLAPPED);
-                if (result.IsInvalid)
+                return Windows.CreateWSASocket (addressFamily, socketType, protocolType);
+            }
+#endif
+
+            internal static partial class Windows
+            {
+                internal static InnerSafeCloseSocket Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressSize)
                 {
-                    result.SetHandleAsInvalid();
+                    InnerSafeCloseSocket result = Interop.Windows.Winsock.accept(socketHandle.DangerousGetHandle(), socketAddress, ref socketAddressSize);
+                    if (result.IsInvalid)
+                    {
+                        result.SetHandleAsInvalid();
+                    }
+                    return result;
                 }
-                return result;
             }
 
+#if !MONO
             internal static InnerSafeCloseSocket Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressSize)
             {
-                InnerSafeCloseSocket result = Interop.Winsock.accept(socketHandle.DangerousGetHandle(), socketAddress, ref socketAddressSize);
-                if (result.IsInvalid)
-                {
-                    result.SetHandleAsInvalid();
-                }
-                return result;
+                return Windows.Accept(socketHandle, socketAddress, socketAddressSize);
             }
+#endif
         }
     }
 }

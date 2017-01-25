@@ -39,6 +39,7 @@ namespace System.Net.Sockets
         private InnerSafeCloseSocket _innerSocketCopy;
 #endif
 
+#if !MONO
         public override bool IsInvalid
         {
             get
@@ -46,7 +47,9 @@ namespace System.Net.Sockets
                 return IsClosed || base.IsInvalid;
             }
         }
+#endif
 
+#if !MONO
 #if DEBUG
         public void AddRef()
         {
@@ -81,6 +84,7 @@ namespace System.Net.Sockets
                 Debug.Assert(false, "SafeCloseSocket.Release after inner socket disposed." + e);
             }
         }
+#endif
 #endif
 
         private void SetInnerSocket(InnerSafeCloseSocket socket)
@@ -139,6 +143,7 @@ namespace System.Net.Sockets
 
         protected override bool ReleaseHandle()
         {
+#if !MONO
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"_innerSocket={_innerSocket}");
 
             _released = true;
@@ -155,10 +160,12 @@ namespace System.Net.Sockets
             }
 
             InnerReleaseHandle();
+#endif
 
             return true;
         }
 
+#if !MONO
         internal void CloseAsIs()
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"_innerSocket={_innerSocket}");
@@ -194,6 +201,7 @@ namespace System.Net.Sockets
             }
 #endif
         }
+#endif
 
         internal sealed partial class InnerSafeCloseSocket : SafeHandleMinusOneIsInvalid
         {
@@ -201,6 +209,7 @@ namespace System.Net.Sockets
 
             private bool _blockable;
 
+#if !MONO
             public override bool IsInvalid
             {
                 get
@@ -208,10 +217,12 @@ namespace System.Net.Sockets
                     return IsClosed || base.IsInvalid;
                 }
             }
+#endif
 
             // This method is implicitly reliable and called from a CER.
             protected override bool ReleaseHandle()
             {
+#if !MONO
                 bool ret = false;
 
 #if DEBUG
@@ -244,6 +255,9 @@ namespace System.Net.Sockets
                     }
                 }
 #endif
+#else
+                return true;
+#endif
             }
 
 #if DEBUG
@@ -274,6 +288,7 @@ namespace System.Net.Sockets
             }
 #endif
 
+#if !MONO
             // Use this method to close the socket handle using the linger options specified on the socket.
             // Guaranteed to only be called once, under a CER, and not if regular DangerousRelease is called.
             internal void BlockingRelease()
@@ -286,6 +301,7 @@ namespace System.Net.Sockets
                 _blockable = true;
                 DangerousRelease();
             }
+#endif
         }
     }
 }

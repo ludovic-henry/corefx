@@ -7,9 +7,12 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
-    internal static partial class Sys
+    internal static partial class Unix
     {
-        [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_GetPeerName")]
-        internal static extern unsafe Error GetPeerName(SafeHandle socket, byte* socketAddress, int* socketAddressLen);
+        internal static partial class Sys
+        {
+            [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_GetPeerName")]
+            internal static extern unsafe Error GetPeerName(SafeHandle socket, byte* socketAddress, int* socketAddressLen);
+        }
     }
 }

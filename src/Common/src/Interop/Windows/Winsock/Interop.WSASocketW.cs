@@ -11,15 +11,18 @@ using SocketType = System.Net.Internals.SocketType;
 
 internal static partial class Interop
 {
-    internal static partial class Winsock
+    internal static partial class Windows
     {
-        [DllImport(Interop.Libraries.Ws2_32, CharSet = CharSet.Unicode, SetLastError = true)]
-        internal static extern IntPtr WSASocketW(
-                                        [In] AddressFamily addressFamily,
-                                        [In] SocketType socketType,
-                                        [In] int protocolType,
-                                        [In] IntPtr protocolInfo,
-                                        [In] int group,
-                                        [In] int flags);
+        internal static partial class Winsock
+        {
+            [DllImport(Interop.Libraries.Ws2_32, CharSet = CharSet.Unicode, SetLastError = true)]
+            internal static extern IntPtr WSASocketW(
+                                            [In] AddressFamily addressFamily,
+                                            [In] SocketType socketType,
+                                            [In] int protocolType,
+                                            [In] IntPtr protocolInfo,
+                                            [In] int group,
+                                            [In] int flags);
+        }
     }
 }

@@ -10,64 +10,81 @@ using System.Threading;
 
 namespace System.Net
 {
-    internal class SocketProtocolSupportPal
+    internal partial class SocketProtocolSupportPal
     {
-        private static bool s_ipv4 = true;
-        private static bool s_ipv6 = true;
-
-        private static bool s_initialized;
-        private static readonly object s_initializedLock = new object();
-
-        public static bool OSSupportsIPv6
+        internal static class Unix
         {
-            get
-            {
-                EnsureInitialized();
-                return s_ipv6;
-            }
-        }
+            private static bool s_ipv4 = true;
+            private static bool s_ipv6 = true;
 
-        public static bool OSSupportsIPv4
-        {
-            get
-            {
-                EnsureInitialized();
-                return s_ipv4;
-            }
-        }
+            private static bool s_initialized;
+            private static readonly object s_initializedLock = new object();
 
-        private static void EnsureInitialized()
-        {
-            if (!Volatile.Read(ref s_initialized))
+            public static bool OSSupportsIPv6
             {
-                lock (s_initializedLock)
+                get
                 {
-                    if (!s_initialized)
-                    {
-                        s_ipv4 = IsProtocolSupported(AddressFamily.InterNetwork);
-                        s_ipv6 = IsProtocolSupported(AddressFamily.InterNetworkV6);
+                    EnsureInitialized();
+                    return s_ipv6;
+                }
+            }
 
-                        Volatile.Write(ref s_initialized, true);
+            public static bool OSSupportsIPv4
+            {
+                get
+                {
+                    EnsureInitialized();
+                    return s_ipv4;
+                }
+            }
+
+            private static void EnsureInitialized()
+            {
+                if (!Volatile.Read(ref s_initialized))
+                {
+                    lock (s_initializedLock)
+                    {
+                        if (!s_initialized)
+                        {
+                            s_ipv4 = IsProtocolSupported(AddressFamily.InterNetwork);
+                            s_ipv6 = IsProtocolSupported(AddressFamily.InterNetworkV6);
+
+                            Volatile.Write(ref s_initialized, true);
+                        }
+                    }
+                }
+            }
+
+            private static unsafe bool IsProtocolSupported(AddressFamily af)
+            {
+                IntPtr socket = (IntPtr)(-1);
+                try
+                {
+                    Interop.Unix.Error err = Interop.Unix.Sys.Socket(af, SocketType.Dgram, (ProtocolType)0, &socket);
+                    return err != Interop.Unix.Error.EAFNOSUPPORT;
+                }
+                finally
+                {
+                    if (socket != (IntPtr)(-1))
+                    {
+                        Interop.Unix.Sys.Close(socket);
                     }
                 }
             }
         }
 
-        private static unsafe bool IsProtocolSupported(AddressFamily af)
+#if !MONO
+        public static bool OSSupportsIPv6
         {
-            IntPtr socket = (IntPtr)(-1);
-            try
-            {
-                Interop.Error err = Interop.Sys.Socket(af, SocketType.Dgram, (ProtocolType)0, &socket);
-                return err != Interop.Error.EAFNOSUPPORT;
-            }
-            finally
-            {
-                if (socket != (IntPtr)(-1))
-                {
-                    Interop.Sys.Close(socket);
-                }
-            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Unix.OSSupportsIPv6; }
         }
+
+        public static bool OSSupportsIPv4
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Unix.OSSupportsIPv4; }
+        }
+#endif
     }
 }

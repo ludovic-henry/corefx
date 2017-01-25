@@ -2,18 +2,19 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Net.Sockets;
 
 namespace System.Net.Internals
 {
     internal static partial class SocketExceptionFactory
     {
-        static class Unix
+        public static SocketException CreateSocketException(SocketError errorCode, int platformError)
         {
-            public static SocketException CreateSocketException(SocketError errorCode, int platformError)
-            {
-                return new ExtendedSocketException(errorCode, platformError);
-            }
+            if (Environment.IsRunningOnWindows)
+                return Windows.CreateSocketException(errorCode, platformError);
+            else
+                return Unix.CreateSocketException(errorCode, platformError);
         }
     }
 }

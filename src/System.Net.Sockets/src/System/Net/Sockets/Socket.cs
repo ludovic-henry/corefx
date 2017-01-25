@@ -78,6 +78,7 @@ namespace System.Net.Sockets
         internal static volatile bool s_perfCountersEnabled;
 
         #region Constructors
+
         public Socket(SocketType socketType, ProtocolType protocolType)
             : this(AddressFamily.InterNetworkV6, socketType, protocolType)
         {
@@ -142,6 +143,7 @@ namespace System.Net.Sockets
             _protocolType = Sockets.ProtocolType.Unknown;
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+
         #endregion
 
         #region Properties
@@ -699,6 +701,7 @@ namespace System.Net.Sockets
         {
             return (family == _addressFamily) || (family == AddressFamily.InterNetwork && IsDualMode);
         }
+
         #endregion
 
         #region Public Methods
@@ -741,6 +744,7 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
 
+#if !MONO
         internal void InternalBind(EndPoint localEP)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, localEP);
@@ -764,6 +768,7 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+#endif
 
         private void DoBind(EndPoint endPointSnapshot, Internals.SocketAddress socketAddress)
         {
@@ -1155,6 +1160,7 @@ namespace System.Net.Sockets
             return bytesTransferred;
         }
 
+#if !MONO
         public int Send(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -1216,6 +1222,7 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, bytesTransferred);
             return bytesTransferred;
         }
+#endif
 
         // Sends data to a connected socket, starting at the indicated location in the buffer.
         public int Send(byte[] buffer, int offset, int size, SocketFlags socketFlags)
@@ -1229,6 +1236,7 @@ namespace System.Net.Sockets
             return bytesTransferred;
         }
 
+#if !MONO
         public int Send(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -1294,12 +1302,14 @@ namespace System.Net.Sockets
 
             return bytesTransferred;
         }
+#endif
 
         public void SendFile(string fileName)
         {
             SendFile(fileName, null, null, TransmitFileOptions.UseDefaultWorkerThread);
         }
 
+#if !MONO
         public void SendFile(string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -1333,7 +1343,9 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+#endif
 
+#if !MONO
         // Sends data to a specific end point, starting at the indicated location in the buffer.
         public int SendTo(byte[] buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP)
         {
@@ -1407,6 +1419,7 @@ namespace System.Net.Sockets
             }
             return bytesTransferred;
         }
+#endif
 
         // Sends data to a specific end point, starting at the indicated location in the data.
         public int SendTo(byte[] buffer, int size, SocketFlags socketFlags, EndPoint remoteEP)
@@ -1452,6 +1465,7 @@ namespace System.Net.Sockets
             return bytesTransferred;
         }
 
+#if !MONO
         public int Receive(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -1521,6 +1535,7 @@ namespace System.Net.Sockets
 
             return bytesTransferred;
         }
+#endif
 
         public int Receive(IList<ArraySegment<byte>> buffers)
         {
@@ -1538,6 +1553,7 @@ namespace System.Net.Sockets
             return bytesTransferred;
         }
 
+#if !MONO
         public int Receive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -1616,7 +1632,9 @@ namespace System.Net.Sockets
 
             return bytesTransferred;
         }
+#endif
 
+#if !MONO
         // Receives a datagram into a specific location in the data buffer and stores
         // the end point.
         public int ReceiveMessageFrom(byte[] buffer, int offset, int size, ref SocketFlags socketFlags, ref EndPoint remoteEP, out IPPacketInformation ipPacketInformation)
@@ -1698,7 +1716,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Error(this, errorCode);
             return bytesTransferred;
         }
+#endif
 
+#if !MONO
         // Receives a datagram into a specific location in the data buffer and stores
         // the end point.
         public int ReceiveFrom(byte[] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP)
@@ -1806,6 +1826,7 @@ namespace System.Net.Sockets
             }
             return bytesTransferred;
         }
+#endif
 
         // Receives a datagram and stores the source end point.
         public int ReceiveFrom(byte[] buffer, int size, SocketFlags socketFlags, ref EndPoint remoteEP)
@@ -1823,6 +1844,7 @@ namespace System.Net.Sockets
             return ReceiveFrom(buffer, 0, buffer != null ? buffer.Length : 0, SocketFlags.None, ref remoteEP);
         }
 
+#if !MONO
         public int IOControl(int ioControlCode, byte[] optionInValue, byte[] optionOutValue)
         {
             if (CleanedUp)
@@ -1855,12 +1877,14 @@ namespace System.Net.Sockets
 
             return realOptionLength;
         }
+#endif
 
         public int IOControl(IOControlCode ioControlCode, byte[] optionInValue, byte[] optionOutValue)
         {
             return IOControl(unchecked((int)ioControlCode), optionInValue, optionOutValue);
         }
 
+#if !MONO
         // Sets the specified option to the specified value.
         public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
         {
@@ -1873,7 +1897,9 @@ namespace System.Net.Sockets
 
             SetSocketOption(optionLevel, optionName, optionValue, false);
         }
+#endif
 
+#if !MONO
         public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, byte[] optionValue)
         {
             if (CleanedUp)
@@ -1900,13 +1926,17 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         // Sets the specified option to the specified value.
         public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
         {
             SetSocketOption(optionLevel, optionName, (optionValue ? 1 : 0));
         }
+#endif
 
+#if !MONO
         // Sets the specified option to the specified value.
         public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, object optionValue)
         {
@@ -1962,7 +1992,9 @@ namespace System.Net.Sockets
                 throw new ArgumentException(SR.net_sockets_invalid_optionValue_all, nameof(optionValue));
             }
         }
+#endif
 
+#if !MONO
         // Gets the value of a socket option.
         public object GetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName)
         {
@@ -2007,7 +2039,9 @@ namespace System.Net.Sockets
 
             return optionValue;
         }
+#endif
 
+#if !MONO
         public void GetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, byte[] optionValue)
         {
             if (CleanedUp)
@@ -2037,7 +2071,9 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         public byte[] GetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, int optionLength)
         {
             if (CleanedUp)
@@ -2077,6 +2113,7 @@ namespace System.Net.Sockets
 
             return optionValue;
         }
+#endif
 
         public void SetIPProtectionLevel(IPProtectionLevel level)
         {
@@ -2099,6 +2136,7 @@ namespace System.Net.Sockets
             }
         }
 
+#if !MONO
         // Determines the status of the socket.
         public bool Poll(int microSeconds, SelectMode mode)
         {
@@ -2123,7 +2161,9 @@ namespace System.Net.Sockets
 
             return status;
         }
+#endif
 
+#if !MONO
         // Determines the status of a socket.
         public static void Select(IList checkRead, IList checkWrite, IList checkError, int microSeconds)
         {
@@ -2154,7 +2194,9 @@ namespace System.Net.Sockets
                 throw new SocketException((int)errorCode);
             }
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    BeginConnect - Does a async winsock connect, by calling
@@ -2205,12 +2247,15 @@ namespace System.Net.Sockets
 
             return UnsafeBeginConnect(remoteEP, callback, state, flowContext:true);
         }
+#endif
 
+#if !MONO
         private bool CanUseConnectEx(EndPoint remoteEP)
         {
             return (_socketType == SocketType.Stream) &&
                 (_rightEndPoint != null || remoteEP.GetType() == typeof(IPEndPoint));
         }
+#endif
 
         public SocketInformation DuplicateAndClose(int targetProcessId)
         {
@@ -2223,6 +2268,7 @@ namespace System.Net.Sockets
             throw new PlatformNotSupportedException(SR.net_sockets_duplicateandclose_notsupported);
         }
 
+#if !MONO
         internal IAsyncResult UnsafeBeginConnect(EndPoint remoteEP, AsyncCallback callback, object state, bool flowContext = false)
         {
             if (CanUseConnectEx(remoteEP))
@@ -2241,7 +2287,9 @@ namespace System.Net.Sockets
             asyncResult.InvokeCallback();
             return asyncResult;
         }
+#endif
 
+#if !MONO
         public IAsyncResult BeginConnect(string host, int port, AsyncCallback requestCallback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, host);
@@ -2297,6 +2345,7 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, result);
             return result;
         }
+#endif
 
         private static void ThrowIfNotSupportsMultipleConnectAttempts()
         {
@@ -2332,6 +2381,7 @@ namespace System.Net.Sockets
             return result;
         }
 
+#if !MONO
         public IAsyncResult BeginConnect(IPAddress[] addresses, int port, AsyncCallback requestCallback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, addresses);
@@ -2379,7 +2429,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, result);
             return result;
         }
+#endif
 
+#if !MONO
         public IAsyncResult BeginDisconnect(bool reuseSocket, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2399,7 +2451,9 @@ namespace System.Net.Sockets
             asyncResult.FinishPostingAsyncOp();
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private void DoBeginDisconnect(bool reuseSocket, DisconnectOverlappedAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2430,7 +2484,9 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
         }
+#endif
 
+#if !MONO
         public void Disconnect(bool reuseSocket)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2460,7 +2516,9 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    EndConnect - Called after receiving callback from BeginConnect,
@@ -2551,7 +2609,9 @@ namespace System.Net.Sockets
                 NetEventSource.Exit(this, "");
             }
         }
+#endif
 
+#if !MONO
         public void EndDisconnect(IAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, asyncResult);
@@ -2604,6 +2664,7 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+#endif
 
         // Routine Description:
         // 
@@ -2633,6 +2694,7 @@ namespace System.Net.Sockets
             return result;
         }
 
+#if !MONO
         public IAsyncResult BeginSend(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2676,7 +2738,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         internal IAsyncResult UnsafeBeginSend(byte[] buffer, int offset, int size, SocketFlags socketFlags, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2697,7 +2761,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private SocketError DoBeginSend(byte[] buffer, int offset, int size, SocketFlags socketFlags, OverlappedAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"SRC:{LocalEndPoint} DST:{RemoteEndPoint} size:{size}");
@@ -2730,6 +2796,7 @@ namespace System.Net.Sockets
             }
             return errorCode;
         }
+#endif
 
         public IAsyncResult BeginSend(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
         {
@@ -2742,6 +2809,7 @@ namespace System.Net.Sockets
             return result;
         }
 
+#if !MONO
         public IAsyncResult BeginSend(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2780,7 +2848,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private SocketError DoBeginSend(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, OverlappedAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"SRC:{LocalEndPoint} DST:{RemoteEndPoint} buffers:{buffers}");
@@ -2809,6 +2879,7 @@ namespace System.Net.Sockets
             }
             return errorCode;
         }
+#endif
 
         // Routine Description:
         // 
@@ -2833,6 +2904,7 @@ namespace System.Net.Sockets
             return bytesTransferred;
         }
 
+#if !MONO
         public int EndSend(IAsyncResult asyncResult, out SocketError errorCode)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, asyncResult);
@@ -2891,12 +2963,14 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, bytesTransferred);
             return bytesTransferred;
         }
+#endif
 
         public IAsyncResult BeginSendFile(string fileName, AsyncCallback callback, object state)
         {
             return BeginSendFile(fileName, null, null, TransmitFileOptions.UseDefaultWorkerThread, callback, state);
         }
 
+#if !MONO
         public IAsyncResult BeginSendFile(string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -2918,7 +2992,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         public void EndSendFile(IAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, asyncResult);
@@ -2937,7 +3013,9 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    BeginSendTo - Async implementation of SendTo,
@@ -3001,7 +3079,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private void DoBeginSendTo(byte[] buffer, int offset, int size, SocketFlags socketFlags, EndPoint endPointSnapshot, Internals.SocketAddress socketAddress, OverlappedAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"size:{size}");
@@ -3045,7 +3125,9 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"size:{size} returning AsyncResult:{asyncResult}");
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    EndSendTo -  Called by user code after I/O is done or the user wants to wait.
@@ -3113,6 +3195,7 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, bytesTransferred);
             return bytesTransferred;
         }
+#endif
 
         // Routine Description:
         // 
@@ -3147,6 +3230,7 @@ namespace System.Net.Sockets
             return result;
         }
 
+#if !MONO
         public IAsyncResult BeginReceive(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -3191,7 +3275,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         internal IAsyncResult UnsafeBeginReceive(byte[] buffer, int offset, int size, SocketFlags socketFlags, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -3208,7 +3294,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private SocketError DoBeginReceive(byte[] buffer, int offset, int size, SocketFlags socketFlags, OverlappedAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"size:{size}");
@@ -3253,6 +3341,7 @@ namespace System.Net.Sockets
 
             return errorCode;
         }
+#endif
 
         public IAsyncResult BeginReceive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
         {
@@ -3265,6 +3354,7 @@ namespace System.Net.Sockets
             return result;
         }
 
+#if !MONO
         public IAsyncResult BeginReceive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -3306,7 +3396,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private SocketError DoBeginReceive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, OverlappedAsyncResult asyncResult)
         {
 #if DEBUG
@@ -3346,6 +3438,7 @@ namespace System.Net.Sockets
 
             return errorCode;
         }
+#endif
 
 #if DEBUG
         private IntPtr _lastReceiveHandle;
@@ -3377,6 +3470,7 @@ namespace System.Net.Sockets
             return bytesTransferred;
         }
 
+#if !MONO
         public int EndReceive(IAsyncResult asyncResult, out SocketError errorCode)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, asyncResult);
@@ -3444,7 +3538,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, bytesTransferred);
             return bytesTransferred;
         }
+#endif
 
+#if !MONO
         public IAsyncResult BeginReceiveMessageFrom(byte[] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, object state)
         {
             if (NetEventSource.IsEnabled)
@@ -3570,7 +3666,9 @@ namespace System.Net.Sockets
             }
             return asyncResult;
         }
+#endif
 
+#if !MONO
         public int EndReceiveMessageFrom(IAsyncResult asyncResult, ref SocketFlags socketFlags, ref EndPoint endPoint, out IPPacketInformation ipPacketInformation)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, asyncResult);
@@ -3651,7 +3749,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, bytesTransferred);
             return bytesTransferred;
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    BeginReceiveFrom - Async implementation of RecvFrom call,
@@ -3742,7 +3842,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private void DoBeginReceiveFrom(byte[] buffer, int offset, int size, SocketFlags socketFlags, EndPoint endPointSnapshot, Internals.SocketAddress socketAddress, OriginalAddressOverlappedAsyncResult asyncResult)
         {
             EndPoint oldEndPoint = _rightEndPoint;
@@ -3789,7 +3891,9 @@ namespace System.Net.Sockets
 
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"size:{size} return AsyncResult:{asyncResult}");
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    EndReceiveFrom -  Called when I/O is done or the user wants to wait. If
@@ -3881,7 +3985,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, bytesTransferred);
             return bytesTransferred;
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    BeginAccept - Does a async winsock accept, creating a new socket on success
@@ -3912,12 +4018,14 @@ namespace System.Net.Sockets
             Debug.Assert(CleanedUp);
             throw new ObjectDisposedException(this.GetType().FullName);
         }
+#endif
 
         public IAsyncResult BeginAccept(int receiveSize, AsyncCallback callback, object state)
         {
             return BeginAccept(null, receiveSize, callback, state);
         }
 
+#if !MONO
         // This is the truly async version that uses AcceptEx.
         public IAsyncResult BeginAccept(Socket acceptSocket, int receiveSize, AsyncCallback callback, object state)
         {
@@ -3946,7 +4054,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, asyncResult);
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private void DoBeginAccept(Socket acceptSocket, int receiveSize, AcceptOverlappedAsyncResult asyncResult)
         {
             if (_rightEndPoint == null)
@@ -3980,7 +4090,9 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         // Routine Description:
         // 
         //    EndAccept -  Called by user code after I/O is done or the user wants to wait.
@@ -4000,6 +4112,7 @@ namespace System.Net.Sockets
             byte[] buffer;
             return EndAccept(out buffer, out bytesTransferred, asyncResult);
         }
+#endif
 
         public Socket EndAccept(out byte[] buffer, IAsyncResult asyncResult)
         {
@@ -4012,6 +4125,7 @@ namespace System.Net.Sockets
             return socket;
         }
 
+#if !MONO
         public Socket EndAccept(out byte[] buffer, out int bytesTransferred, IAsyncResult asyncResult)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, asyncResult);
@@ -4076,7 +4190,9 @@ namespace System.Net.Sockets
             }
             return socket;
         }
+#endif
 
+#if !MONO
         // Disables sends and receives on a socket.
         public void Shutdown(SocketShutdown how)
         {
@@ -4107,8 +4223,11 @@ namespace System.Net.Sockets
             InternalSetBlocking(_willBlockInternal);
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this);
         }
+#endif
 
         #region Async methods
+
+#if !MONO
         public bool AcceptAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4174,7 +4293,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool ConnectAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4289,6 +4410,7 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled)  NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
         public static bool ConnectAsync(SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
         {
@@ -4351,6 +4473,7 @@ namespace System.Net.Sockets
             return retval;
         }
 
+#if !MONO
         public static void CancelConnectAsync(SocketAsyncEventArgs e)
         {
             if (e == null)
@@ -4359,7 +4482,9 @@ namespace System.Net.Sockets
             }
             e.CancelConnectAsync();
         }
+#endif
 
+#if !MONO
         public bool DisconnectAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);
@@ -4401,7 +4526,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool ReceiveAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4452,7 +4579,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool ReceiveFromAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4522,7 +4651,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool ReceiveMessageFromAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4593,7 +4724,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool SendAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4643,7 +4776,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool SendPacketsAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4711,7 +4846,9 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
 
+#if !MONO
         public bool SendToAsync(SocketAsyncEventArgs e)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, e);
@@ -4769,10 +4906,13 @@ namespace System.Net.Sockets
             if (NetEventSource.IsEnabled) NetEventSource.Exit(this, retval);
             return retval;
         }
+#endif
+
         #endregion
         #endregion
 
         #region Internal and private properties
+
         private static object InternalSyncObject
         {
             get
@@ -4786,6 +4926,7 @@ namespace System.Net.Sockets
             }
         }
 
+#if !MONO
         private CacheSet Caches
         {
             get
@@ -4798,6 +4939,7 @@ namespace System.Net.Sockets
                 return _caches;
             }
         }
+#endif
 
         internal bool CleanedUp
         {
@@ -4807,6 +4949,7 @@ namespace System.Net.Sockets
             }
         }
 
+#if !MONO
         internal TransportType Transport
         {
             get
@@ -4819,16 +4962,22 @@ namespace System.Net.Sockets
                             TransportType.All;
             }
         }
+#endif
+
         #endregion
 
         #region Internal and private methods
+
+#if !MONO
         internal static void GetIPProtocolInformation(AddressFamily addressFamily, Internals.SocketAddress socketAddress, out bool isIPv4, out bool isIPv6)
         {
             bool isIPv4MappedToIPv6 = socketAddress.Family == AddressFamily.InterNetworkV6 && socketAddress.GetIPAddress().IsIPv4MappedToIPv6;
             isIPv4 = addressFamily == AddressFamily.InterNetwork || isIPv4MappedToIPv6; // DualMode
             isIPv6 = addressFamily == AddressFamily.InterNetworkV6;
         }
+#endif
 
+#if !MONO
         private void CheckSetOptionPermissions(SocketOptionLevel optionLevel, SocketOptionName optionName)
         {
             // Freely allow only the options listed below.
@@ -4856,7 +5005,9 @@ namespace System.Net.Sockets
             {
             }
         }
+#endif
 
+#if !MONO
         private Internals.SocketAddress SnapshotAndSerialize(ref EndPoint remoteEP)
         {
             IPEndPoint ipSnapshot = remoteEP as IPEndPoint;
@@ -4869,6 +5020,7 @@ namespace System.Net.Sockets
 
             return CallSerializeCheckDnsEndPoint(remoteEP);
         }
+#endif
 
         // Give a nicer exception for DnsEndPoint in cases where it is not supported.
         private Internals.SocketAddress CallSerializeCheckDnsEndPoint(EndPoint remoteEP)
@@ -4881,6 +5033,7 @@ namespace System.Net.Sockets
             return IPEndPointExtensions.Serialize(remoteEP);
         }
 
+#if !MONO
         // DualMode: automatically re-map IPv4 addresses to IPv6 addresses.
         private IPEndPoint RemapIPEndPoint(IPEndPoint input)
         {
@@ -4890,6 +5043,7 @@ namespace System.Net.Sockets
             }
             return input;
         }
+#endif
 
         // A socketAddress must always be the result of remoteEP.Serialize().
         private Internals.SocketAddress CheckCacheRemote(ref EndPoint remoteEP, bool isOverwrite)
@@ -4908,6 +5062,7 @@ namespace System.Net.Sockets
 
             // This doesn't use SnapshotAndSerialize() because we need the ipSnapshot later.
             Internals.SocketAddress socketAddress = CallSerializeCheckDnsEndPoint(remoteEP);
+
 
             // We remember the first peer with which we have communicated.
             Internals.SocketAddress permittedRemoteAddress = _permittedRemoteAddress;
@@ -4943,12 +5098,14 @@ namespace System.Net.Sockets
             }
         }
 
+#if !MONO
         internal void InternalConnect(EndPoint remoteEP)
         {
             EndPoint endPointSnapshot = remoteEP;
             Internals.SocketAddress socketAddress = SnapshotAndSerialize(ref endPointSnapshot);
             DoConnect(endPointSnapshot, socketAddress);
         }
+#endif
 
         private void DoConnect(EndPoint endPointSnapshot, Internals.SocketAddress socketAddress)
         {
@@ -4994,6 +5151,7 @@ namespace System.Net.Sockets
             }
         }
 
+#if !MONO
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing)
@@ -5114,6 +5272,7 @@ namespace System.Net.Sockets
                 NetEventSource.Fail(this, $"handle:{_handle}, Closing the handle threw ObjectDisposedException.");
             }
         }
+#endif
 
         public void Dispose()
         {
@@ -5132,6 +5291,7 @@ namespace System.Net.Sockets
             Dispose(false);
         }
 
+#if !MONO
         // This version does not throw.
         internal void InternalShutdown(SocketShutdown how)
         {
@@ -5148,7 +5308,9 @@ namespace System.Net.Sockets
             }
             catch (ObjectDisposedException) { }
         }
+#endif
 
+#if !MONO
         // Set the socket option to begin receiving packet information if it has not been
         // set for this socket previously.
         internal void SetReceivingPacketInformation()
@@ -5179,7 +5341,9 @@ namespace System.Net.Sockets
                 _receivingPacketInformation = true;
             }
         }
+#endif
 
+#if !MONO
         internal unsafe void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue, bool silent)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, $"optionLevel:{optionLevel} optionName:{optionName} optionValue:{optionValue} silent:{silent}");
@@ -5226,7 +5390,9 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         private void SetMulticastOption(SocketOptionName optionName, MulticastOption MR)
         {
             SocketError errorCode = SocketPal.SetMulticastOption(_handle, optionName, MR);
@@ -5243,7 +5409,9 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         // IPv6 setsockopt for JOIN / LEAVE multicast group.
         private void SetIPv6MulticastOption(SocketOptionName optionName, IPv6MulticastOption MR)
         {
@@ -5261,7 +5429,9 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         private void SetLingerOption(LingerOption lref)
         {
             SocketError errorCode = SocketPal.SetLingerOption(_handle, lref);
@@ -5278,7 +5448,9 @@ namespace System.Net.Sockets
                 throw socketException;
             }
         }
+#endif
 
+#if !MONO
         private LingerOption GetLingerOpt()
         {
             LingerOption lingerOption;
@@ -5298,7 +5470,9 @@ namespace System.Net.Sockets
 
             return lingerOption;
         }
+#endif
 
+#if !MONO
         private MulticastOption GetMulticastOpt(SocketOptionName optionName)
         {
             MulticastOption multicastOption;
@@ -5318,7 +5492,9 @@ namespace System.Net.Sockets
 
             return multicastOption;
         }
+#endif
 
+#if !MONO
         // IPv6 getsockopt for JOIN / LEAVE multicast group.
         private IPv6MulticastOption GetIPv6MulticastOpt(SocketOptionName optionName)
         {
@@ -5339,6 +5515,7 @@ namespace System.Net.Sockets
 
             return multicastOption;
         }
+#endif
 
         // This method will ignore failures, but returns the win32
         // error code, and will update internal state on success.
@@ -5387,6 +5564,7 @@ namespace System.Net.Sockets
             InternalSetBlocking(desired, out current);
         }
 
+#if !MONO
         // Implements ConnectEx - this provides completion port IO and support for disconnect and reconnects.
         // Since this is private, the unsafe mode is specified with a flag instead of an overload.
         private IAsyncResult BeginConnectEx(EndPoint remoteEP, bool flowContext, AsyncCallback callback, object state)
@@ -5473,7 +5651,9 @@ namespace System.Net.Sockets
             }
             return asyncResult;
         }
+#endif
 
+#if !MONO
         private static void DnsCallback(IAsyncResult result)
         {
             if (result.CompletedSynchronously)
@@ -5499,14 +5679,18 @@ namespace System.Net.Sockets
                 context.InvokeCallback();
             }
         }
+#endif
 
+#if !MONO
         private static bool DoDnsCallback(IAsyncResult result, MultipleAddressConnectAsyncResult context)
         {
             IPAddress[] addresses = DnsAPMExtensions.EndGetHostAddresses(result);
             context._addresses = addresses;
             return DoMultipleAddressConnectCallback(PostOneBeginConnect(context), context);
         }
+#endif
 
+#if !MONO
         private sealed class ConnectAsyncResult : ContextAwareResult
         {
             private EndPoint _endPoint;
@@ -5522,7 +5706,9 @@ namespace System.Net.Sockets
                 get { return _endPoint; }
             }
         }
+#endif
 
+#if !MONO
         private sealed class MultipleAddressConnectAsyncResult : ContextAwareResult
         {
             internal MultipleAddressConnectAsyncResult(IPAddress[] addresses, int port, Socket socket, object myState, AsyncCallback myCallBack) :
@@ -5556,7 +5742,9 @@ namespace System.Net.Sockets
                 }
             }
         }
+#endif
 
+#if !MONO
         private static AsyncCallback s_multipleAddressConnectCallback;
         private static AsyncCallback CachedMultipleAddressConnectCallback
         {
@@ -5569,7 +5757,9 @@ namespace System.Net.Sockets
                 return s_multipleAddressConnectCallback;
             }
         }
+#endif
 
+#if !MONO
         // Disable CS0162: Unreachable code detected
         //
         // SupportsMultipleConnectAttempts is a constant; when false, the following lines will trigger CS0162.
@@ -5620,7 +5810,9 @@ namespace System.Net.Sockets
 
             return null;
         }
+#endif
 
+#if !MONO
         private static void MultipleAddressConnectCallback(IAsyncResult result)
         {
             if (result.CompletedSynchronously)
@@ -5646,7 +5838,9 @@ namespace System.Net.Sockets
                 context.InvokeCallback();
             }
         }
+#endif
 
+#if !MONO
         // This is like a regular async callback worker, except the result can be an exception.  This is a useful pattern when
         // processing should continue whether or not an async step failed.
         private static bool DoMultipleAddressConnectCallback(object result, MultipleAddressConnectAsyncResult context)
@@ -5710,6 +5904,7 @@ namespace System.Net.Sockets
             return false;
         }
 #pragma warning restore
+#endif
 
         // CreateAcceptSocket - pulls unmanaged results and assembles them into a new Socket object.
         internal Socket CreateAcceptSocket(SafeCloseSocket fd, EndPoint remoteEP)
@@ -5829,10 +6024,12 @@ namespace System.Net.Sockets
 
         #endregion
 
+#if !MONO
         [System.Diagnostics.Conditional("TRACE_VERBOSE")]
         internal void DebugMembers()
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, $"_handle:{_handle} _isConnected:{_isConnected}");
         }
+#endif
     }
 }

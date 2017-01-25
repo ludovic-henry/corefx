@@ -7,15 +7,18 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
-    internal static partial class Sys
+    internal static partial class Unix
     {
-        internal static class Fcntl
+        internal static partial class Sys
         {
-            [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_FcntlSetIsNonBlocking", SetLastError = true)]
-            internal static extern int DangerousSetIsNonBlocking(IntPtr fd, int isNonBlocking);
+            internal static class Fcntl
+            {
+                [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_FcntlSetIsNonBlocking", SetLastError = true)]
+                internal static extern int DangerousSetIsNonBlocking(IntPtr fd, int isNonBlocking);
 
-            [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_FcntlSetIsNonBlocking", SetLastError=true)]
-            internal static extern int SetIsNonBlocking(SafeHandle fd, int isNonBlocking);
+                [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_FcntlSetIsNonBlocking", SetLastError=true)]
+                internal static extern int SetIsNonBlocking(SafeHandle fd, int isNonBlocking);
+            }
         }
     }
 }

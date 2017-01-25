@@ -8,12 +8,15 @@ using System.Net.Sockets;
 
 internal static partial class Interop
 {
-    internal static partial class Winsock
+    internal static partial class Windows
     {
-        [DllImport(Interop.Libraries.Ws2_32, SetLastError = true)]
-        internal static extern SocketError bind(
-            [In] SafeCloseSocket socketHandle,
-            [In] byte[] socketAddress,
-            [In] int socketAddressSize);
+        internal static partial class Winsock
+        {
+            [DllImport(Interop.Libraries.Ws2_32, SetLastError = true)]
+            internal static extern SocketError bind(
+                [In] SafeCloseSocket socketHandle,
+                [In] byte[] socketAddress,
+                [In] int socketAddressSize);
+        }
     }
 }

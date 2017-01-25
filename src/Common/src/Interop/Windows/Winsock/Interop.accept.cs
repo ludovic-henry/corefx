@@ -8,13 +8,16 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
-    internal static partial class Winsock
+    internal static partial class Windows
     {
-        // Blocking call - requires IntPtr instead of SafeCloseSocket.
-        [DllImport(Interop.Libraries.Ws2_32, ExactSpelling = true, SetLastError = true)]
-        internal static extern SafeCloseSocket.InnerSafeCloseSocket accept(
-            [In] IntPtr socketHandle,
-            [Out] byte[] socketAddress,
-            [In, Out] ref int socketAddressSize);
+        internal static partial class Winsock
+        {
+            // Blocking call - requires IntPtr instead of SafeCloseSocket.
+            [DllImport(Interop.Libraries.Ws2_32, ExactSpelling = true, SetLastError = true)]
+            internal static extern SafeCloseSocket.InnerSafeCloseSocket accept(
+                [In] IntPtr socketHandle,
+                [Out] byte[] socketAddress,
+                [In, Out] ref int socketAddressSize);
+        }
     }
 }

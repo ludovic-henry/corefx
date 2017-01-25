@@ -39,7 +39,7 @@ namespace System.Net.Sockets
                 }
             }
 
-            public bool TryRegister(SafeCloseSocket socket, Interop.Sys.SocketEvents current, Interop.Sys.SocketEvents events, out Interop.Error error)
+            public bool TryRegister(SafeCloseSocket socket, Interop.Unix.Sys.SocketEvents current, Interop.Unix.Sys.SocketEvents events, out Interop.Unix.Error error)
             {
                 Debug.Assert(WasAllocated, "Expected WasAllocated to be true");
                 return _engine.TryRegister(socket, current, events, _handle, out error);
@@ -58,7 +58,7 @@ namespace System.Net.Sockets
         private static SocketAsyncEngine s_currentEngine;
 
         private readonly IntPtr _port;
-        private readonly Interop.Sys.SocketEvent* _buffer;
+        private readonly Interop.Unix.Sys.SocketEvent* _buffer;
 
         //
         // The read and write ends of a native pipe, used to signal that this instance's event loop should stop 
@@ -213,11 +213,11 @@ namespace System.Net.Sockets
                 //
                 // Create the event port and buffer
                 //
-                if (Interop.Sys.CreateSocketEventPort(out _port) != Interop.Error.SUCCESS)
+                if (Interop.Unix.Sys.CreateSocketEventPort(out _port) != Interop.Unix.Error.SUCCESS)
                 {
                     throw new InternalException();
                 }
-                if (Interop.Sys.CreateSocketEventBuffer(EventBufferCount, out _buffer) != Interop.Error.SUCCESS)
+                if (Interop.Unix.Sys.CreateSocketEventBuffer(EventBufferCount, out _buffer) != Interop.Unix.Error.SUCCESS)
                 {
                     throw new InternalException();
                 }
@@ -227,14 +227,14 @@ namespace System.Net.Sockets
                 // to the pipe will send an event to the event loop.
                 //
                 int* pipeFds = stackalloc int[2];
-                if (Interop.Sys.Pipe(pipeFds, Interop.Sys.PipeFlags.O_CLOEXEC) != 0)
+                if (Interop.Unix.Sys.Pipe(pipeFds, Interop.Unix.Sys.PipeFlags.O_CLOEXEC) != 0)
                 {
                     throw new InternalException();
                 }
-                _shutdownReadPipe = pipeFds[Interop.Sys.ReadEndOfPipe];
-                _shutdownWritePipe = pipeFds[Interop.Sys.WriteEndOfPipe];
+                _shutdownReadPipe = pipeFds[Interop.Unix.Sys.ReadEndOfPipe];
+                _shutdownWritePipe = pipeFds[Interop.Unix.Sys.WriteEndOfPipe];
 
-                if (Interop.Sys.TryChangeSocketEventRegistration(_port, (IntPtr)_shutdownReadPipe, Interop.Sys.SocketEvents.None, Interop.Sys.SocketEvents.Read, ShutdownHandle) != Interop.Error.SUCCESS)
+                if (Interop.Unix.Sys.TryChangeSocketEventRegistration(_port, (IntPtr)_shutdownReadPipe, Interop.Unix.Sys.SocketEvents.None, Interop.Unix.Sys.SocketEvents.Read, ShutdownHandle) != Interop.Unix.Error.SUCCESS)
                 {
                     throw new InternalException();
                 }
@@ -263,8 +263,8 @@ namespace System.Net.Sockets
                 while (!shutdown)
                 {
                     int numEvents = EventBufferCount;
-                    Interop.Error err = Interop.Sys.WaitForSocketEvents(_port, _buffer, &numEvents);
-                    if (err != Interop.Error.SUCCESS)
+                    Interop.Unix.Error err = Interop.Unix.Sys.WaitForSocketEvents(_port, _buffer, &numEvents);
+                    if (err != Interop.Unix.Error.SUCCESS)
                     {
                         throw new InternalException();
                     }
@@ -304,7 +304,7 @@ namespace System.Net.Sockets
             // Write to the pipe, which will wake up the event loop and cause it to exit.
             //
             byte b = 1;
-            int bytesWritten = Interop.Sys.Write(_shutdownWritePipe, &b, 1);
+            int bytesWritten = Interop.Unix.Sys.Write(_shutdownWritePipe, &b, 1);
             if (bytesWritten != 1)
             {
                 throw new InternalException();
@@ -315,32 +315,32 @@ namespace System.Net.Sockets
         {
             if (_shutdownReadPipe != -1)
             {
-                Interop.Sys.Close((IntPtr)_shutdownReadPipe);
+                Interop.Unix.Sys.Close((IntPtr)_shutdownReadPipe);
             }
             if (_shutdownWritePipe != -1)
             {
-                Interop.Sys.Close((IntPtr)_shutdownWritePipe);
+                Interop.Unix.Sys.Close((IntPtr)_shutdownWritePipe);
             }
             if (_buffer != null)
             {
-                Interop.Sys.FreeSocketEventBuffer(_buffer);
+                Interop.Unix.Sys.FreeSocketEventBuffer(_buffer);
             }
             if (_port != (IntPtr)(-1))
             {
-                Interop.Sys.CloseSocketEventPort(_port);
+                Interop.Unix.Sys.CloseSocketEventPort(_port);
             }
         }
 
-        private bool TryRegister(SafeCloseSocket socket, Interop.Sys.SocketEvents current, Interop.Sys.SocketEvents events, IntPtr handle, out Interop.Error error)
+        private bool TryRegister(SafeCloseSocket socket, Interop.Unix.Sys.SocketEvents current, Interop.Unix.Sys.SocketEvents events, IntPtr handle, out Interop.Unix.Error error)
         {
             if (current == events)
             {
-                error = Interop.Error.SUCCESS;
+                error = Interop.Unix.Error.SUCCESS;
                 return true;
             }
 
-            error = Interop.Sys.TryChangeSocketEventRegistration(_port, socket, current, events, handle);
-            return error == Interop.Error.SUCCESS;
+            error = Interop.Unix.Sys.TryChangeSocketEventRegistration(_port, socket, current, events, handle);
+            return error == Interop.Unix.Error.SUCCESS;
         }
     }
 }

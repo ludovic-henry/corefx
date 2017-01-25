@@ -8,9 +8,12 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
-    internal static partial class Winsock
+    internal static partial class Windows
     {
-        [DllImport(Interop.Libraries.Ws2_32, ExactSpelling = true, SetLastError = true)]
-        internal static extern SocketError closesocket([In] IntPtr socketHandle);
+        internal static partial class Winsock
+        {
+            [DllImport(Interop.Libraries.Ws2_32, ExactSpelling = true, SetLastError = true)]
+            internal static extern SocketError closesocket([In] IntPtr socketHandle);
+        }
     }
 }

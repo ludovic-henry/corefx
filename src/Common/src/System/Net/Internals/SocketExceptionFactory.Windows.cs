@@ -8,9 +8,12 @@ namespace System.Net.Internals
 {
     internal static partial class SocketExceptionFactory
     {
-        public static SocketException CreateSocketException(SocketError errorCode, int platformError)
+        static class Windows
         {
-            return new SocketException((int)errorCode);
+            public static SocketException CreateSocketException(SocketError errorCode, int platformError)
+            {
+                return new SocketException((int)errorCode);
+            }
         }
     }
 }

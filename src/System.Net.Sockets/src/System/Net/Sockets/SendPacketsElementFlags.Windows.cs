@@ -6,8 +6,8 @@ namespace System.Net.Sockets
 {
     internal enum SendPacketsElementFlags : uint
     {
-        File = Interop.Winsock.TransmitPacketsElementFlags.File,
-        Memory = Interop.Winsock.TransmitPacketsElementFlags.Memory,
-        EndOfPacket = Interop.Winsock.TransmitPacketsElementFlags.EndOfPacket,
+        File = Interop.Windows.Winsock.TransmitPacketsElementFlags.File,
+        Memory = Interop.Windows.Winsock.TransmitPacketsElementFlags.Memory,
+        EndOfPacket = Interop.Windows.Winsock.TransmitPacketsElementFlags.EndOfPacket,
     }
 }
