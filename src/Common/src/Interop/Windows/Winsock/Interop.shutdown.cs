@@ -8,6 +8,10 @@ using System.Net.Sockets;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Windows
+    {
+#endif
     internal static partial class Winsock
     {
         [DllImport(Interop.Libraries.Ws2_32, SetLastError = true)]
@@ -15,4 +19,7 @@ internal static partial class Interop
             [In] SafeCloseSocket socketHandle,
             [In] int how);
     }
+#if MONO
+    }
+#endif
 }

@@ -8,6 +8,10 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Windows
+    {
+#endif
     internal static partial class Winsock
     {
         [DllImport(Interop.Libraries.Ws2_32, ExactSpelling = true, SetLastError = true)]
@@ -66,4 +70,7 @@ internal static partial class Interop
             [In] ref IPv6MulticastRequest mreq,
             [In] int optionLength);
     }
+#if MONO
+    }
+#endif
 }

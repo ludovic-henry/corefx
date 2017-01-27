@@ -163,7 +163,6 @@ namespace System.Net.Internals
             return new IPEndPoint(address, port);
         }
 
-#if !MONO
         // For ReceiveFrom we need to pin address size, using reserved Buffer space.
         internal void CopyAddressSizeIntoBuffer()
         {
@@ -172,15 +171,12 @@ namespace System.Net.Internals
             Buffer[Buffer.Length - IntPtr.Size + 2] = unchecked((byte)(InternalSize >> 16));
             Buffer[Buffer.Length - IntPtr.Size + 3] = unchecked((byte)(InternalSize >> 24));
         }
-#endif
 
-#if !MONO
         // Can be called after the above method did work.
         internal int GetAddressSizeOffset()
         {
             return Buffer.Length - IntPtr.Size;
         }
-#endif
 
         public override bool Equals(object comparand)
         {

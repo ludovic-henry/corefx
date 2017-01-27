@@ -13,7 +13,6 @@ namespace System.Net.Sockets
 {
     internal static partial class SocketPal
     {
-#if !MONO
         // The API that uses this information is not supported on *nix, and will throw
         // PlatformNotSupportedException instead.
         public static int ProtocolInformationSize
@@ -25,7 +24,6 @@ namespace System.Net.Sockets
                     return Unix.ProtocolInformationSize;
             }
         }
-#endif
 
         public static bool SupportsMultipleConnectAttempts
         {
@@ -45,7 +43,6 @@ namespace System.Net.Sockets
                 Unix.Initialize ();
         }
 
-#if !MONO
         public static void CheckDualModeReceiveSupport(Socket socket)
         {
             if (Environment.IsRunningOnWindows)
@@ -53,7 +50,6 @@ namespace System.Net.Sockets
             else
                 Unix.CheckDualModeReceiveSupport (socket);
         }
-#endif
 
         public static SocketError CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, out SafeCloseSocket socket)
         {
@@ -127,7 +123,6 @@ namespace System.Net.Sockets
                 return Unix.Connect(handle, socketAddress, socketAddressLen);
         }
 
-#if !MONO
         public static SocketError Send(SafeCloseSocket handle, IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out int bytesTransferred)
         {
             if (Environment.IsRunningOnWindows)
@@ -247,7 +242,6 @@ namespace System.Net.Sockets
             else
                 Unix.SetReceivingDualModeIPv4PacketInformation(socket);
         }
-#endif
 
         public static void SetIPProtectionLevel(Socket socket, SocketOptionLevel optionLevel, int protectionLevel)
         {
@@ -257,7 +251,6 @@ namespace System.Net.Sockets
                 Unix.SetIPProtectionLevel(socket, optionLevel, protectionLevel);
         }
 
-#if !MONO
         public static unsafe SocketError GetSockOpt(SafeCloseSocket handle, SocketOptionLevel optionLevel, SocketOptionName optionName, out int optionValue)
         {
             if (Environment.IsRunningOnWindows)
@@ -417,6 +410,5 @@ namespace System.Net.Sockets
             else
                 return Unix.Disconnect(socket, handle, reuseSocket);
         }
-#endif
     }
 }

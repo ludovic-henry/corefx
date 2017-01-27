@@ -8,6 +8,10 @@ using System.Net.Sockets;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Windows
+    {
+#endif
     internal static partial class Winsock
     {
         // This method is always blocking, so it uses an IntPtr.
@@ -20,4 +24,7 @@ internal static partial class Interop
             [In] byte[] socketAddress,
             [In] int socketAddressSize);
     }
+#if MONO
+    }
+#endif
 }

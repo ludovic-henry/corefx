@@ -17,19 +17,31 @@ namespace System.Net.Sockets
     // BeginReceive, BeginReceiveFrom, BeginSendFile, and BeginAccept calls.
     internal partial class BaseOverlappedAsyncResult : ContextAwareResult
     {
+#if MONO
+        private void Unix_BaseOverlappedAsyncResult(Socket socket, Object asyncState, AsyncCallback asyncCallback)
+#else
         public BaseOverlappedAsyncResult(Socket socket, Object asyncState, AsyncCallback asyncCallback)
             : base(socket, asyncState, asyncCallback)
+#endif
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, socket);
         }
 
+#if MONO
+        private void Unix_CompletionCallback(int numBytes, SocketError errorCode)
+#else
         public void CompletionCallback(int numBytes, SocketError errorCode)
+#endif
         {
             ErrorCode = (int)errorCode;
             InvokeCallback(PostCompletion(numBytes));
         }
 
+#if MONO
+        private void Unix_ReleaseUnmanagedStructures()
+#else
         private void ReleaseUnmanagedStructures()
+#endif
         {
             // NOTE: this method needs to exist to conform to the contract expected by the
             //       platform-independent code in BaseOverlappedAsyncResult.CheckAsyncCallOverlappedResult.

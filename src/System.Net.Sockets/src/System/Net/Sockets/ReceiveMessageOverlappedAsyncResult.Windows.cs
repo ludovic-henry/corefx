@@ -14,23 +14,26 @@ namespace System.Net.Sockets
 {
     internal unsafe sealed partial class ReceiveMessageOverlappedAsyncResult : BaseOverlappedAsyncResult
     {
-        private Interop.Winsock.WSAMsg* _message;
+        private Interop.Windows.Winsock.WSAMsg* _message;
         private WSABuffer* _wsaBuffer;
         private byte[] _wsaBufferArray;
         private byte[] _controlBuffer;
         internal byte[] _messageBuffer;
 
-        private static readonly int s_controlDataSize = Marshal.SizeOf<Interop.Winsock.ControlData>();
-        private static readonly int s_controlDataIPv6Size = Marshal.SizeOf<Interop.Winsock.ControlDataIPv6>();
+        private static readonly int s_controlDataSize = Marshal.SizeOf<Interop.Windows.Winsock.ControlData>();
+        private static readonly int s_controlDataIPv6Size = Marshal.SizeOf<Interop.Windows.Winsock.ControlDataIPv6>();
         private static readonly int s_wsaBufferSize = Marshal.SizeOf<WSABuffer>();
-        private static readonly int s_wsaMsgSize = Marshal.SizeOf<Interop.Winsock.WSAMsg>();
+        private static readonly int s_wsaMsgSize = Marshal.SizeOf<Interop.Windows.Winsock.WSAMsg>();
 
         private IntPtr GetSocketAddressSizePtr()
         {
             return Marshal.UnsafeAddrOfPinnedArrayElement(_socketAddress.Buffer, _socketAddress.GetAddressSizeOffset());
         }
-
+#if MONO
+        private unsafe int Windows_GetSocketAddressSize()
+#else
         internal unsafe int GetSocketAddressSize()
+#endif
         {
             return *(int*)GetSocketAddressSizePtr();
         }
@@ -41,7 +44,11 @@ namespace System.Net.Sockets
         // These calls are outside the runtime and are unmanaged code, so we need
         // to prepare specific structures and ints that lie in unmanaged memory
         // since the overlapped calls may complete asynchronously.
+#if MONO
+        private void Windows_SetUnmanagedStructures(byte[] buffer, int offset, int size, Internals.SocketAddress socketAddress, SocketFlags socketFlags)
+#else
         internal void SetUnmanagedStructures(byte[] buffer, int offset, int size, Internals.SocketAddress socketAddress, SocketFlags socketFlags)
+#endif
         {
             _messageBuffer = new byte[s_wsaMsgSize];
             _wsaBufferArray = new byte[s_wsaBufferSize];
@@ -84,7 +91,7 @@ namespace System.Net.Sockets
 
 
             // Setup structure.
-            _message = (Interop.Winsock.WSAMsg*)Marshal.UnsafeAddrOfPinnedArrayElement(_messageBuffer, 0);
+            _message = (Interop.Windows.Winsock.WSAMsg*)Marshal.UnsafeAddrOfPinnedArrayElement(_messageBuffer, 0);
             _message->socketAddress = Marshal.UnsafeAddrOfPinnedArrayElement(_socketAddress.Buffer, 0);
             _message->addressLength = (uint)_socketAddress.Size;
             _message->buffers = Marshal.UnsafeAddrOfPinnedArrayElement(_wsaBufferArray, 0);
@@ -106,7 +113,7 @@ namespace System.Net.Sockets
             if (_controlBuffer.Length == s_controlDataSize)
             {
                 // IPv4
-                Interop.Winsock.ControlData controlData = Marshal.PtrToStructure<Interop.Winsock.ControlData>(_message->controlBuffer.Pointer);
+                Interop.Windows.Winsock.ControlData controlData = Marshal.PtrToStructure<Interop.Windows.Winsock.ControlData>(_message->controlBuffer.Pointer);
                 if (controlData.length != UIntPtr.Zero)
                 {
                     address = new IPAddress((long)controlData.address);
@@ -117,7 +124,7 @@ namespace System.Net.Sockets
             else if (_controlBuffer.Length == s_controlDataIPv6Size)
             {
                 // IPv6
-                Interop.Winsock.ControlDataIPv6 controlData = Marshal.PtrToStructure<Interop.Winsock.ControlDataIPv6>(_message->controlBuffer.Pointer);
+                Interop.Windows.Winsock.ControlDataIPv6 controlData = Marshal.PtrToStructure<Interop.Windows.Winsock.ControlDataIPv6>(_message->controlBuffer.Pointer);
                 if (controlData.length != UIntPtr.Zero)
                 {
                     address = new IPAddress(controlData.address);
@@ -137,19 +144,31 @@ namespace System.Net.Sockets
         // 1) completed synchronously.
         // 2) was pended.
         // 3) failed.
+#if MONO
+        private void Windows_SyncReleaseUnmanagedStructures()
+#else
         internal void SyncReleaseUnmanagedStructures()
+#endif
         {
             InitIPPacketInformation();
             ForceReleaseUnmanagedStructures();
         }
 
+#if MONO
+        private void Windows_ForceReleaseUnmanagedStructures()
+#else
         protected override void ForceReleaseUnmanagedStructures()
+#endif
         {
             _socketFlags = _message->flags;
             base.ForceReleaseUnmanagedStructures();
         }
 
+#if MONO
+        private object Windows_PostCompletion(int numBytes)
+#else
         internal override object PostCompletion(int numBytes)
+#endif
         {
             InitIPPacketInformation();
             if (ErrorCode == 0 && NetEventSource.IsEnabled)

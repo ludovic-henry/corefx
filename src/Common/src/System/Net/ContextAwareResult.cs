@@ -22,12 +22,9 @@ namespace System.Net
     // to have several pending IOs differentiated by their state object.  We don't want that pattern to break the cache.
     internal class CallbackClosure
     {
-#if !MONO
         private AsyncCallback _savedCallback;
         private ExecutionContext _savedContext;
-#endif
 
-#if !MONO
         internal CallbackClosure(ExecutionContext context, AsyncCallback callback)
         {
             if (callback != null)
@@ -36,9 +33,7 @@ namespace System.Net
                 _savedContext = context;
             }
         }
-#endif
 
-#if !MONO
         internal bool IsCompatible(AsyncCallback callback)
         {
             if (callback == null || _savedCallback == null)
@@ -55,9 +50,7 @@ namespace System.Net
 
             return true;
         }
-#endif
 
-#if !MONO
         internal AsyncCallback AsyncCallback
         {
             get
@@ -65,9 +58,7 @@ namespace System.Net
                 return _savedCallback;
             }
         }
-#endif
 
-#if !MONO
         internal ExecutionContext Context
         {
             get
@@ -75,7 +66,6 @@ namespace System.Net
                 return _savedContext;
             }
         }
-#endif
     }
 
     // This class will ensure that the correct context is restored on the thread before invoking
@@ -93,11 +83,9 @@ namespace System.Net
             PostBlockFinished = 0x10,
         }
 
-#if !MONO
         // This needs to be volatile so it's sure to make it over to the completion thread in time.
         private volatile ExecutionContext _context;
         private object _lock;
-#endif
         private StateFlags _flags;
 
         internal ContextAwareResult(object myObject, object myState, AsyncCallback myCallBack) :
@@ -133,7 +121,6 @@ namespace System.Net
             }
         }
 
-#if !MONO
         // This can be used to establish a context during an async op for something like calling a delegate or demanding a permission.
         // May block briefly if the context is still being produced.
         //
@@ -188,9 +175,7 @@ namespace System.Net
                 return _context; // No need to copy on CoreCLR; ExecutionContext is immutable
             }
         }
-#endif
 
-#if !MONO
 #if DEBUG
         // Want to be able to verify that the Identity was requested.  If it was requested but isn't available
         // on the Identity property, it's either available via ContextCopy or wasn't needed (synchronous).
@@ -202,16 +187,12 @@ namespace System.Net
             }
         }
 #endif
-#endif
 
-#if !MONO
         internal object StartPostingAsyncOp()
         {
             return StartPostingAsyncOp(true);
         }
-#endif
 
-#if !MONO
         // If ContextCopy or Identity will be used, the return value should be locked until FinishPostingAsyncOp() is called
         // or the operation has been aborted (e.g. by BeginXxx throwing).  Otherwise, this can be called with false to prevent the lock
         // object from being created.
@@ -228,9 +209,7 @@ namespace System.Net
             _flags |= StateFlags.PostBlockStarted;
             return _lock;
         }
-#endif
 
-#if !MONO
         // Call this when returning control to the user.
         internal bool FinishPostingAsyncOp()
         {
@@ -245,9 +224,7 @@ namespace System.Net
             ExecutionContext cachedContext = null;
             return CaptureOrComplete(ref cachedContext, false);
         }
-#endif
 
-#if !MONO
         // Call this when returning control to the user.  Allows a cached Callback Closure to be supplied and used
         // as appropriate, and replaced with a new one.
         internal bool FinishPostingAsyncOp(ref CallbackClosure closure)
@@ -294,18 +271,14 @@ namespace System.Net
 
             return calledCallback;
         }
-#endif
 
-#if !MONO
         protected override void Cleanup()
         {
             base.Cleanup();
             if (NetEventSource.IsEnabled) NetEventSource.Info(this);
             CleanupInternal();
         }
-#endif
 
-#if !MONO
         // This must be called right before returning the result to the user.  It might call the callback itself,
         // to avoid flowing context.  Even if the operation completes before this call, the callback won't have been
         // called.
@@ -382,9 +355,7 @@ namespace System.Net
 
             return false;
         }
-#endif
 
-#if !MONO
         // This method is guaranteed to be called only once.  If called with a non-zero userToken, the context is not flowed.
         protected override void Complete(IntPtr userToken)
         {
@@ -417,14 +388,11 @@ namespace System.Net
 
             ExecutionContext.Run(context, s => ((ContextAwareResult)s).CompleteCallback(), this);
         }
-#endif
 
-#if !MONO
         private void CompleteCallback()
         {
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, "Context set, calling callback.");
             base.Complete(IntPtr.Zero);
         }
-#endif
     }
 }

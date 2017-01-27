@@ -23,14 +23,22 @@ namespace System.Net.Sockets
         // The WinNT Completion Port callback.
         private static unsafe readonly IOCompletionCallback s_ioCallback = new IOCompletionCallback(CompletionPortCallback);
 
+#if MONO
+        private void Windows_BaseOverlappedAsyncResult(Socket socket, Object asyncState, AsyncCallback asyncCallback)
+#else
         internal BaseOverlappedAsyncResult(Socket socket, Object asyncState, AsyncCallback asyncCallback)
             : base(socket, asyncState, asyncCallback)
+#endif
         {
             _cleanupCount = 1;
             if (NetEventSource.IsEnabled) NetEventSource.Info(this, socket);
         }
 
+#if MONO
+        private SafeNativeOverlapped Windows_NativeOverlapped
+#else
         internal SafeNativeOverlapped NativeOverlapped
+#endif
         {
             get
             {
@@ -46,7 +54,11 @@ namespace System.Net.Sockets
         // These calls are outside the runtime and are unmanaged code, so we need
         // to prepare specific structures and ints that lie in unmanaged memory
         // since the overlapped calls may complete asynchronously.
+#if MONO
+        private void Windows_SetUnmanagedStructures(object objectsToPin)
+#else
         internal void SetUnmanagedStructures(object objectsToPin)
+#endif
         {
             Socket s = (Socket)AsyncObject;
 
@@ -113,7 +125,7 @@ namespace System.Net.Sockets
                             // The async IO completed with a failure.
                             // Here we need to call WSAGetOverlappedResult() just so Marshal.GetLastWin32Error() will return the correct error.
                             SocketFlags ignore;
-                            bool success = Interop.Winsock.WSAGetOverlappedResult(
+                            bool success = Interop.Windows.Winsock.WSAGetOverlappedResult(
                                 socket.SafeHandle,
                                 asyncResult.NativeOverlapped,
                                 out numBytes,
@@ -150,7 +162,11 @@ namespace System.Net.Sockets
 
         // The following property returns the Win32 unsafe pointer to
         // whichever Overlapped structure we're using for IO.
+#if MONO
+        private SafeHandle Windows_OverlappedHandle
+#else
         internal SafeHandle OverlappedHandle
+#endif
         {
             get
             {
@@ -161,7 +177,11 @@ namespace System.Net.Sockets
             }
         }
 
+#if MONO
+        private void Windows_ReleaseUnmanagedStructures()
+#else
         private void ReleaseUnmanagedStructures()
+#endif
         {
             if (Interlocked.Decrement(ref _cleanupCount) == 0)
             {
@@ -169,7 +189,11 @@ namespace System.Net.Sockets
             }
         }
 
+#if MONO
+        private void Windows_Cleanup()
+#else
         protected override void Cleanup()
+#endif
         {
             base.Cleanup();
 
@@ -183,7 +207,11 @@ namespace System.Net.Sockets
         // Utility cleanup routine. Frees the overlapped structure.
         // This should be overridden to free pinned and unmanaged memory in the subclass.
         // It needs to also be invoked from the subclass.
+#if MONO
+        private void Windows_ForceReleaseUnmanagedStructures()
+#else
         protected virtual void ForceReleaseUnmanagedStructures()
+#endif
         {
             // Free the unmanaged memory if allocated.
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this);

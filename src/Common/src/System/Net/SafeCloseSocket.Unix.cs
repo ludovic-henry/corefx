@@ -58,7 +58,6 @@ namespace System.Net.Sockets
             }
         }
 
-#if !MONO
         public int ReceiveTimeout
         {
             get
@@ -71,9 +70,7 @@ namespace System.Net.Sockets
                 _receiveTimeout = value;;
             }
         }
-#endif
 
-#if !MONO
         public int SendTimeout
         {
             get
@@ -86,74 +83,48 @@ namespace System.Net.Sockets
                 _sendTimeout = value;
             }
         }
-#endif
 
         internal static partial class Unix
         {
-            public static unsafe SafeCloseSocket CreateSocket(IntPtr fileDescriptor)
-            {
-                return SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Unix.CreateSocket(fileDescriptor));
-            }
-        }
-
-#if !MONO
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe SafeCloseSocket CreateSocket(IntPtr fileDescriptor)
         {
-            return Unix.CreateSocket(fileDescriptor);
-        }
-#endif
-
-        internal static partial class Unix
-        {
-            public static unsafe SocketError CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, out SafeCloseSocket socket)
-            {
-                SocketError errorCode;
-                socket = SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Unix.CreateSocket(addressFamily, socketType, protocolType, out errorCode));
-                return errorCode;
-            }
+            return SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Unix.CreateSocket(fileDescriptor));
         }
 
-#if !MONO
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe SocketError CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, out SafeCloseSocket socket)
         {
-            return Unix.CreateSocket(addressFamily, socketType, protocolType, out socket);
-        }
-#endif
-
-        internal static partial class Unix
-        {
-            public static unsafe SocketError Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressSize, out SafeCloseSocket socket)
-            {
-                SocketError errorCode;
-                socket = SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Unix.Accept(socketHandle, socketAddress, ref socketAddressSize, out errorCode));
-                return errorCode;
-            }
+            SocketError errorCode;
+            socket = SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Unix.CreateSocket(addressFamily, socketType, protocolType, out errorCode));
+            return errorCode;
         }
 
-#if !MONO
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe SocketError Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressSize, out SafeCloseSocket socket)
         {
-            return Unix.Accept(socketHandle, socketAddress, ref socketAddressSize, out socket);
+            SocketError errorCode;
+            socket = SafeCloseSocket.CreateSocket(InnerSafeCloseSocket.Unix.Accept(socketHandle, socketAddress, ref socketAddressSize, out errorCode));
+            return errorCode;
         }
-#endif
+        }
 
-#if !MONO
+#if MONO
+        private void Unix_InnerReleaseHandle()
+#else
         private void InnerReleaseHandle()
+#endif
         {
             if (_asyncContext != null)
             {
                 _asyncContext.Close();
             }
         }
-#endif
 
         internal sealed partial class InnerSafeCloseSocket : SafeHandleMinusOneIsInvalid
         {
-#if !MONO
+#if MONO
+            private unsafe SocketError Unix_InnerReleaseHandle()
+#else
             private unsafe SocketError InnerReleaseHandle()
+#endif
             {
                 int errorCode;
 
@@ -228,98 +199,68 @@ namespace System.Net.Sockets
 
                 return SocketPal.Unix.GetSocketErrorForErrorCode((Interop.Unix.Error)errorCode);
             }
-#endif
 
             internal static partial class Unix
             {
-                public static InnerSafeCloseSocket CreateSocket(IntPtr fileDescriptor)
-                {
-                    var res = new InnerSafeCloseSocket();
-                    res.SetHandle(fileDescriptor);
-                    return res;
-                }
-            }
-
-#if !MONO
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static InnerSafeCloseSocket CreateSocket(IntPtr fileDescriptor)
             {
-                return Unix.CreateSocket (fileDescriptor);
+                var res = new InnerSafeCloseSocket();
+                res.SetHandle(fileDescriptor);
+                return res;
             }
-#endif
 
-            internal static partial class Unix
+            public static unsafe InnerSafeCloseSocket CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, out SocketError errorCode)
             {
-                public static unsafe InnerSafeCloseSocket CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, out SocketError errorCode)
+                IntPtr fd;
+                Interop.Unix.Error error = Interop.Unix.Sys.Socket(addressFamily, socketType, protocolType, &fd);
+                if (error == Interop.Unix.Error.SUCCESS)
                 {
-                    IntPtr fd;
-                    Interop.Unix.Error error = Interop.Unix.Sys.Socket(addressFamily, socketType, protocolType, &fd);
-                    if (error == Interop.Unix.Error.SUCCESS)
+                    Debug.Assert(fd != (IntPtr)(-1), "fd should not be -1");
+
+                    errorCode = SocketError.Success;
+
+                    // The socket was created successfully; enable IPV6_V6ONLY by default for AF_INET6 sockets.
+                    if (addressFamily == AddressFamily.InterNetworkV6)
                     {
-                        Debug.Assert(fd != (IntPtr)(-1), "fd should not be -1");
-
-                        errorCode = SocketError.Success;
-
-                        // The socket was created successfully; enable IPV6_V6ONLY by default for AF_INET6 sockets.
-                        if (addressFamily == AddressFamily.InterNetworkV6)
+                        int on = 1;
+                        error = Interop.Unix.Sys.SetSockOpt(fd, SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, (byte*)&on, sizeof(int));
+                        if (error != Interop.Unix.Error.SUCCESS)
                         {
-                            int on = 1;
-                            error = Interop.Unix.Sys.SetSockOpt(fd, SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, (byte*)&on, sizeof(int));
-                            if (error != Interop.Unix.Error.SUCCESS)
-                            {
-                                Interop.Unix.Sys.Close(fd);
-                                fd = (IntPtr)(-1);
-                                errorCode = SocketPal.Unix.GetSocketErrorForErrorCode(error);
-                            }
+                            Interop.Unix.Sys.Close(fd);
+                            fd = (IntPtr)(-1);
+                            errorCode = SocketPal.Unix.GetSocketErrorForErrorCode(error);
                         }
                     }
-                    else
-                    {
-                        Debug.Assert(fd == (IntPtr)(-1), $"Unexpected fd: {fd}");
-
-                        errorCode = SocketPal.Unix.GetSocketErrorForErrorCode(error);
-                    }
-
-                    var res = new InnerSafeCloseSocket();
-                    res.SetHandle(fd);
-                    return res;
                 }
-            }
-
-#if !MONO
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static InnerSafeCloseSocket CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, out SocketError errorCode)
-            {
-                return Unix.CreateSocket (addressFamily, socketType, protocolType, out socket);
-            }
-#endif
-
-            internal static partial class Unix
-            {
-                public static unsafe InnerSafeCloseSocket Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressLen, out SocketError errorCode)
+                else
                 {
-                    IntPtr acceptedFd;
-                    if (!socketHandle.IsNonBlocking)
-                    {
-                        errorCode = socketHandle.AsyncContext.Accept(socketAddress, ref socketAddressLen, -1, out acceptedFd);
-                    }
-                    else
-                    {
-                        SocketPal.Unix.TryCompleteAccept(socketHandle, socketAddress, ref socketAddressLen, out acceptedFd, out errorCode);
-                    }
+                    Debug.Assert(fd == (IntPtr)(-1), $"Unexpected fd: {fd}");
 
-                    var res = new InnerSafeCloseSocket();
-                    res.SetHandle(acceptedFd);
-                    return res;
+                    errorCode = SocketPal.Unix.GetSocketErrorForErrorCode(error);
                 }
+
+                var res = new InnerSafeCloseSocket();
+                res.SetHandle(fd);
+                return res;
             }
 
-#if !MONO
             public static unsafe InnerSafeCloseSocket Accept(SafeCloseSocket socketHandle, byte[] socketAddress, ref int socketAddressLen, out SocketError errorCode)
             {
-                return Unix.Accept(socketHandle, socketAddress, ref socketAddressLen, out errorCode);
+                IntPtr acceptedFd;
+                if (!socketHandle.IsNonBlocking)
+                {
+                    errorCode = socketHandle.AsyncContext.Accept(socketAddress, ref socketAddressLen, -1, out acceptedFd);
+                }
+                else
+                {
+                    SocketPal.Unix.TryCompleteAccept(socketHandle, socketAddress, ref socketAddressLen, out acceptedFd, out errorCode);
+                }
+
+                var res = new InnerSafeCloseSocket();
+                res.SetHandle(acceptedFd);
+                return res;
             }
-#endif
+            }
         }
     }
 }

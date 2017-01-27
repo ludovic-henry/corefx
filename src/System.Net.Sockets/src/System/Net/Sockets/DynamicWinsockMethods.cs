@@ -124,9 +124,9 @@ namespace System.Net.Sockets
 
             unsafe
             {
-                errorCode = Interop.Winsock.WSAIoctl(
+                errorCode = Interop.Windows.Winsock.WSAIoctl(
                    socketHandle,
-                   Interop.Winsock.IoctlSocketConstants.SIOGETEXTENSIONFUNCTIONPOINTER,
+                   Interop.Windows.Winsock.IoctlSocketConstants.SIOGETEXTENSIONFUNCTIONPOINTER,
                    ref guid,
                    sizeof(Guid),
                    out ptr,

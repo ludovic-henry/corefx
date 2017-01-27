@@ -8,6 +8,10 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Unix
+    {
+#endif
     internal static partial class Sys
     {
         internal struct LingerOption
@@ -25,4 +29,7 @@ internal static partial class Interop
         [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_SetLingerOption")]
         internal static extern unsafe Error SetLingerOption(IntPtr socket, LingerOption* option);
     }
+#if MONO
+    }
+#endif
 }

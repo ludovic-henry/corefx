@@ -8,6 +8,10 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Windows
+    {
+#endif
     internal static partial class Mswsock
     {
         [DllImport(Interop.Libraries.Mswsock, SetLastError = true)]
@@ -29,4 +33,7 @@ internal static partial class Interop
             internal int TailLength;
         }
     }
+#if MONO
+    }
+#endif
 }

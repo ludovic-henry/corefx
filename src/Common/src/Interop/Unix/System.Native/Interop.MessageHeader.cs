@@ -7,6 +7,10 @@ using System.Net.Sockets;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Unix
+    {
+#endif
     internal static partial class Sys
     {
         internal unsafe struct IOVector
@@ -26,4 +30,7 @@ internal static partial class Interop
             public SocketFlags Flags;
         }
     }
+#if MONO
+    }
+#endif
 }

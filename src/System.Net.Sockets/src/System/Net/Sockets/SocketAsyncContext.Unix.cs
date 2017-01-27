@@ -520,7 +520,6 @@ namespace System.Net.Sockets
             }
         }
 
-#if !MONO
         public void Close()
         {
             // Drain queues
@@ -541,7 +540,6 @@ namespace System.Net.Sockets
                 _asyncEngineToken.Free();
             }
         }
-#endif
 
         public void SetNonBlocking()
         {

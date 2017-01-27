@@ -18,20 +18,37 @@ namespace System.Net.Sockets
     // from the BeginSend, BeginSendTo, BeginReceive, BeginReceiveFrom calls.
     internal partial class OverlappedAsyncResult : BaseOverlappedAsyncResult
     {
+#if MONO
+        private WSABuffer Windows_singleBuffer;
+        private WSABuffer[] Windows_wsaBuffers;
+#else
         internal WSABuffer _singleBuffer;
         internal WSABuffer[] _wsaBuffers;
+#endif
 
+#if MONO
+        private IntPtr Windows_GetSocketAddressPtr()
+#else
         internal IntPtr GetSocketAddressPtr()
+#endif
         {
             return Marshal.UnsafeAddrOfPinnedArrayElement(_socketAddress.Buffer, 0);
         }
 
+#if MONO
+        private IntPtr Windows_GetSocketAddressSizePtr()
+#else
         internal IntPtr GetSocketAddressSizePtr()
+#endif
         {
             return Marshal.UnsafeAddrOfPinnedArrayElement(_socketAddress.Buffer, _socketAddress.GetAddressSizeOffset());
         }
 
+#if MONO
+        private int Windows_GetSocketAddressSize()
+#else
         internal unsafe int GetSocketAddressSize()
+#endif
         {
             return *(int*)GetSocketAddressSizePtr();
         }
@@ -42,7 +59,11 @@ namespace System.Net.Sockets
         // These calls are outside the runtime and are unmanaged code, so we need
         // to prepare specific structures and ints that lie in unmanaged memory
         // since the overlapped calls may complete asynchronously.
+#if MONO
+        private void Windows_SetUnmanagedStructures(byte[] buffer, int offset, int size, Internals.SocketAddress socketAddress, bool pinSocketAddress)
+#else
         internal void SetUnmanagedStructures(byte[] buffer, int offset, int size, Internals.SocketAddress socketAddress, bool pinSocketAddress)
+#endif
         {
             // Fill in Buffer Array structure that will be used for our send/recv Buffer
             _socketAddress = socketAddress;
@@ -66,7 +87,11 @@ namespace System.Net.Sockets
             _singleBuffer.Pointer = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, offset);
         }
 
+#if MONO
+        private void Windows_SetUnmanagedStructures(IList<ArraySegment<byte>> buffers)
+#else
         internal void SetUnmanagedStructures(IList<ArraySegment<byte>> buffers)
+#endif
         {
             // Fill in Buffer Array structure that will be used for our send/recv Buffer.
             // Make sure we don't let the app mess up the buffer array enough to cause
@@ -102,7 +127,11 @@ namespace System.Net.Sockets
         // 1) completed synchronously.
         // 2) was pended.
         // 3) failed.
+#if MONO
+        private object Windows_PostCompletion(int numBytes)
+#else
         internal override object PostCompletion(int numBytes)
+#endif
         {
             if (ErrorCode == 0 && NetEventSource.IsEnabled)
             {

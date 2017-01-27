@@ -4926,7 +4926,6 @@ namespace System.Net.Sockets
             }
         }
 
-#if !MONO
         private CacheSet Caches
         {
             get
@@ -4939,7 +4938,6 @@ namespace System.Net.Sockets
                 return _caches;
             }
         }
-#endif
 
         internal bool CleanedUp
         {
@@ -4949,7 +4947,6 @@ namespace System.Net.Sockets
             }
         }
 
-#if !MONO
         internal TransportType Transport
         {
             get
@@ -4962,22 +4959,18 @@ namespace System.Net.Sockets
                             TransportType.All;
             }
         }
-#endif
 
         #endregion
 
         #region Internal and private methods
 
-#if !MONO
         internal static void GetIPProtocolInformation(AddressFamily addressFamily, Internals.SocketAddress socketAddress, out bool isIPv4, out bool isIPv6)
         {
             bool isIPv4MappedToIPv6 = socketAddress.Family == AddressFamily.InterNetworkV6 && socketAddress.GetIPAddress().IsIPv4MappedToIPv6;
             isIPv4 = addressFamily == AddressFamily.InterNetwork || isIPv4MappedToIPv6; // DualMode
             isIPv6 = addressFamily == AddressFamily.InterNetworkV6;
         }
-#endif
 
-#if !MONO
         private void CheckSetOptionPermissions(SocketOptionLevel optionLevel, SocketOptionName optionName)
         {
             // Freely allow only the options listed below.
@@ -5005,7 +4998,6 @@ namespace System.Net.Sockets
             {
             }
         }
-#endif
 
 #if !MONO
         private Internals.SocketAddress SnapshotAndSerialize(ref EndPoint remoteEP)

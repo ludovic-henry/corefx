@@ -8,6 +8,10 @@ using System.Net.Sockets;
 
 internal static partial class Interop
 {
+#if MONO
+    internal static partial class Windows
+    {
+#endif
     internal static partial class Winsock
     {
         [DllImport(Interop.Libraries.Ws2_32, SetLastError = true)]
@@ -50,4 +54,7 @@ internal static partial class Interop
             [Out] out IPv6MulticastRequest optionValue,
             [In, Out] ref int optionLength);
     }
+#if MONO
+    }
+#endif
 }
