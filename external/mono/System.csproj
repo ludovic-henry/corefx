@@ -176,6 +176,12 @@
     <Compile Include="..\..\src\System.Private.Uri\src\System\Uri.Unix.cs">
       <Link>System\Uri.Unix.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Collections\Generic\ISet.cs">
+      <Link>System\Collections\Generic\ISet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\ComponentModel\DefaultValueAttribute.cs">
+      <Link>System\ComponentModel\DefaultValueAttribute.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Private.CoreLib">

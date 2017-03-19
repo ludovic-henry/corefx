@@ -53,5 +53,25 @@
       <IncludeInPackage>false</IncludeInPackage>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\Attributes.cs">
+      <Link>System\Runtime\CompilerServices\Attributes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\IO\FileAttributes.cs">
+      <Link>System\IO\FileAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\NgenServicingAttributes.cs">
+      <Link>System\Runtime\NgenServicingAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs">
+      <Link>System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\SpecialNameAttribute.cs">
+      <Link>System\Runtime\CompilerServices\SpecialNameAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Threading\WaitHandleExtensions.cs">
+      <Link>System\Threading\WaitHandleExtensions.cs</Link>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
