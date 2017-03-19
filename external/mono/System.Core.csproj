@@ -43,5 +43,24 @@
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\System.Runtime\src\System\Action.cs">
+      <Link>System\Action.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Function.cs">
+      <Link>System\Function.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\StrongBox.cs">
+      <Link>System\Runtime\CompilerServices\StrongBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\IO\HandleInheritability.cs">
+      <Link>System\IO\HandleInheritability.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Private.CoreLib">
+      <HintPath>System.Private.CoreLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
