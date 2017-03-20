@@ -4,7 +4,11 @@
 
 namespace System.Collections.Generic
 {
+#if MONO
+    internal static class CollectionExtensions
+#else
     public static class CollectionExtensions
+#endif
     {
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {

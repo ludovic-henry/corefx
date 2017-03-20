@@ -14,6 +14,8 @@
     <NoConfig>True</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
+    <DefineConstants>$(DefineConstants);MONO;SYSTEM_CORE_DLL</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,11 +23,10 @@
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>false</Optimize>
     <OutputPath>System.Core-bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -33,33 +34,60 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="System.csproj">
-      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
-      <Name>System</Name>
-    </ProjectReference>
+    <!-- System.Collections -->
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\BitHelper.cs">
+      <Link>System\Collections\Generic\BitHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\HashSet.cs">
+      <Link>System\Collections\Generic\HashSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\HashSetEqualityComparer.cs">
+      <Link>System\Collections\Generic\HashSetEqualityComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\ICollectionDebugView.cs">
+      <Link>System\Collections\Generic\ICollectionDebugView.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
+    <!-- System.Runtime -->
     <Compile Include="..\..\src\System.Runtime\src\System\Action.cs">
       <Link>System\Action.cs</Link>
     </Compile>
     <Compile Include="..\..\src\System.Runtime\src\System\Function.cs">
       <Link>System\Function.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\StrongBox.cs">
-      <Link>System\Runtime\CompilerServices\StrongBox.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\System.Runtime\src\System\IO\HandleInheritability.cs">
       <Link>System\IO\HandleInheritability.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\StrongBox.cs">
+      <Link>System\Runtime\CompilerServices\StrongBox.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <!-- Common -->
+    <Compile Include="Common\System\SR.Strings.cs" />
+    <Compile Include="..\..\src\Common\src\System\Collections\HashHelpers.cs">
+      <Link>Common\System\Collections\HashHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\SR.cs">
+      <Link>Common\System\SR.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="mscorlib.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>mscorlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="System.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System</Name>
+    </ProjectReference>
     <Reference Include="System.Private.CoreLib">
       <HintPath>System.Private.CoreLib.dll</HintPath>
+      <Private>False</Private>
+      <IncludeInPackage>false</IncludeInPackage>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

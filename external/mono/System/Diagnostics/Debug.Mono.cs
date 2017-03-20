@@ -9,24 +9,9 @@ namespace System.Diagnostics
 	// another version of this partial class with the public visibility 
 	static partial class Debug
 	{
-		private static string NewLine => "\n";
+		private static string NewLine => PlatformHelper.IsWindows ? Windows.NewLine : Unix.NewLine;
 
 		// internal and not readonly so that the tests can swap this out.
-		internal static IDebugLogger s_logger = new MonoDebugLogger();
-
-		// --------------
-		// PAL ENDS HERE
-		// --------------
-
-		internal sealed class MonoDebugLogger : IDebugLogger
-		{
-			public void ShowAssertDialog(string stackTrace, string message, string detailMessage)
-			{
-			}
-
-			public void WriteCore(string message)
-			{
-			}
-		}
+		internal static IDebugLogger s_logger = PlatformHelper.IsWindows ? Windows.s_logger : Unix.s_logger;
 	}
 }

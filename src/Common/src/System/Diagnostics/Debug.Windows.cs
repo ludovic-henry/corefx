@@ -6,12 +6,16 @@ using System.Security;
 
 namespace System.Diagnostics
 {
-    // Intentionally excluding visibility so it defaults to internal except for
-    // the one public version in System.Diagnostics.Debug which defines
-    // another version of this partial class with the public visibility 
-    static partial class Debug
-    {
-        private static string NewLine => "\r\n";
+	// Intentionally excluding visibility so it defaults to internal except for
+	// the one public version in System.Diagnostics.Debug which defines
+	// another version of this partial class with the public visibility 
+	static partial class Debug
+	{
+#if MONO
+		private static class Windows
+		{
+#endif
+        internal static string NewLine => "\r\n";
 
         // internal and not read only so that the tests can swap this out.
         internal static IDebugLogger s_logger = new WindowsDebugLogger();
@@ -75,5 +79,8 @@ namespace System.Diagnostics
                 }
             }
         }
+#if MONO
+		}
+#endif
     }
 }
