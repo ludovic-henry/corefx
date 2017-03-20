@@ -11,8 +11,13 @@ namespace System
     {
         private static ResourceManager s_resourceManager;
 
+#if MONO
+        private static ResourceManager ResourceManager
+            => throw new PlatformNotSupportedException();
+#else
         private static ResourceManager ResourceManager
             => s_resourceManager ?? (s_resourceManager = new ResourceManager(ResourceType));
+#endif
 
         // This method is used to decide if we need to append the exception message parameters to the message when calling SR.Format.
         // by default it returns false.

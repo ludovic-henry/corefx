@@ -14,6 +14,8 @@
     <NoConfig>True</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
+    <DefineConstants>$(DefineConstants);MONO;MSCORLIB_DLL</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +23,7 @@
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>false</Optimize>
     <OutputPath>mscorlib-bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -47,31 +49,185 @@
     <!-- <Compile Include="Properties\AssemblyInfo.cs" /> -->
   </ItemGroup>
   <ItemGroup>
+    <!-- System.Collections -->
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\BitArray.cs">
+      <Link>System\Collections\BitArray.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\IDictionaryDebugView.cs">
+      <Link>System\Collections\Generic\IDictionaryDebugView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\Queue.cs">
+      <Link>System\Collections\Generic\Queue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\QueueDebugView.cs">
+      <Link>System\Collections\Generic\QueueDebugView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\SortedList.cs">
+      <Link>System\Collections\Generic\SortedList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\Stack.cs">
+      <Link>System\Collections\Generic\Stack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\StackDebugView.cs">
+      <Link>System\Collections\Generic\StackDebugView.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Diagnostics.Debug -->
+    <Compile Include="System\Diagnostics\Debug.Mono.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Runtime -->
+    <Compile Include="..\..\src\System.Runtime\src\System\IO\FileAttributes.cs">
+      <Link>System\IO\FileAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\Attributes.cs">
+      <Link>System\Runtime\CompilerServices\Attributes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\SpecialNameAttribute.cs">
+      <Link>System\Runtime\CompilerServices\SpecialNameAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs">
+      <Link>System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\NgenServicingAttributes.cs">
+      <Link>System\Runtime\NgenServicingAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\Threading\WaitHandleExtensions.cs">
+      <Link>System\Threading\WaitHandleExtensions.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Runtime.Extensions -->
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\AppDomain.cs">
+      <Link>System\AppDomain.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\Context.cs">
+      <Link>System\Context.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\AppDomainUnloadedException.cs">
+      <Link>System\AppDomainUnloadedException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\ApplicationId.cs">
+      <Link>System\ApplicationId.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\CannotUnloadAppDomainException.cs">
+      <Link>System\CannotUnloadAppDomainException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\.cs">
+      <Link>System\.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\.cs">
+      <Link>System\.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\.cs">
+      <Link>System\.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\.cs">
+      <Link>System\.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\.cs">
+      <Link>System\.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\.cs">
+      <Link>System\.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Security.Principal -->
+    <Compile Include="..\..\src\System.Security.Principal\src\System\Security\Principal\IIdentity.cs">
+      <Link>Security\Principal\IIdentity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Security.Principal\src\System\Security\Principal\IPrincipal.cs">
+      <Link>Security\Principal\IPrincipal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Security.Principal\src\System\Security\Principal\PrincipalPolicy.cs">
+      <Link>Security\Principal\PrincipalPolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Security.Principal\src\System\Security\Principal\TokenImpersonationLevel.cs">
+      <Link>Security\Principal\TokenImpersonationLevel.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Common -->
+    <Compile Include="Common\System\SR.Strings.cs" />
+    <Compile Include="Common\System\PlatformHelper.cs" />
+    <Compile Include="..\..\src\Common\src\System\SR.cs">
+      <Link>Common\System\SR.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\ArrayBuilder.cs">
+      <Link>Common\System\Collections\Generic\ArrayBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs">
+      <Link>Common\System\Collections\Generic\EnumerableHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs">
+      <Link>Common\System\Collections\Generic\LargeArrayBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.cs">
+      <Link>System\Diagnostics\Debug.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.Unix.cs">
+      <Link>System\Diagnostics\Debug.Unix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.Windows.cs">
+      <Link>System\Diagnostics\Debug.Windows.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.Errors.cs">
+      <Link>Common\Interop\Unix\Interop.Errors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.IOErrors.cs">
+      <Link>Common\Interop\Unix\Interop.IOErrors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.Libraries.cs">
+      <Link>Common\Interop\Unix\Interop.Libraries.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.Close.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Dup.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.Dup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.FileDescriptors.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.FileDescriptors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.FLock.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.Open.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.OpenFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.Stat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.SysLog.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.SysLog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Write.cs">
+      <Link>Common\Interop\Unix\System.Native\Interop.Write.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Windows\Interop.Libraries.cs">
+      <Link>Common\Interop\Windows\Interop.Libraries.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Windows\kernel32\Interop.OutputDebugString.cs">
+      <Link>Common\Interop\Windows\kernel32\Interop.OutputDebugString.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs">
+      <Link>Common\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs">
+      <Link>Common\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Private.CoreLib">
       <HintPath>System.Private.CoreLib.dll</HintPath>
       <Private>False</Private>
       <IncludeInPackage>false</IncludeInPackage>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\Attributes.cs">
-      <Link>System\Runtime\CompilerServices\Attributes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\IO\FileAttributes.cs">
-      <Link>System\IO\FileAttributes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\NgenServicingAttributes.cs">
-      <Link>System\Runtime\NgenServicingAttributes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs">
-      <Link>System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\Runtime\CompilerServices\SpecialNameAttribute.cs">
-      <Link>System\Runtime\CompilerServices\SpecialNameAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\Threading\WaitHandleExtensions.cs">
-      <Link>System\Threading\WaitHandleExtensions.cs</Link>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

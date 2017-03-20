@@ -14,6 +14,8 @@
     <NoConfig>True</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
+    <DefineConstants>$(DefineConstants);MONO;SYSTEM_DLL</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,11 +23,10 @@
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>false</Optimize>
     <OutputPath>System-bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;MONO</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -33,7 +34,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
@@ -41,12 +41,35 @@
     <!-- <Compile Include="Properties\AssemblyInfo.cs" /> -->
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="mscorlib.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>mscorlib</Name>
-    </ProjectReference>
+    <!-- System.Collections -->
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\BitHelper.cs">
+      <Link>System\Collections\Generic\BitHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\ICollectionDebugView.cs">
+      <Link>System\Collections\Generic\ICollectionDebugView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\IDictionaryDebugView.cs">
+      <Link>System\Collections\Generic\IDictionaryDebugView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\LinkedList.cs">
+      <Link>System\Collections\Generic\LinkedList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\SortedDictionary.cs">
+      <Link>System\Collections\Generic\SortedDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\SortedSet.cs">
+      <Link>System\Collections\Generic\SortedSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\SortedSet.TreeSubSet.cs">
+      <Link>System\Collections\Generic\SortedSet.TreeSubSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Collections\src\System\Collections\Generic\SortedSetEqualityComparer.cs">
+      <Link>System\Collections\Generic\SortedSetEqualityComparer.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <!-- System.Diagnostics.Debug -->
+    <Compile Include="System\Diagnostics\Debug.Mono.cs" />
     <Compile Include="..\..\src\System.Diagnostics.Debug\src\System\Diagnostics\Debug.Public.cs">
       <Link>System\Diagnostics\Debug.Public.cs</Link>
     </Compile>
@@ -56,40 +79,10 @@
     <Compile Include="..\..\src\System.Diagnostics.Debug\src\System\Diagnostics\DebuggerVisualizerAttribute.cs">
       <Link>System\Diagnostics\DebuggerVisualizerAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.cs">
-      <Link>System\Diagnostics\Debug.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.Errors.cs">
-      <Link>Common\Interop\Unix\Interop.Errors.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.IOErrors.cs">
-      <Link>Common\Interop\Unix\Interop.IOErrors.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.Libraries.cs">
-      <Link>Common\Interop\Unix\Interop.Libraries.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\Interop\Windows\Interop.Libraries.cs">
-      <Link>Common\Interop\Windows\Interop.Libraries.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\Interop\Windows\kernel32\Interop.OutputDebugString.cs">
-      <Link>Common\Interop\Windows\kernel32\Interop.OutputDebugString.cs</Link>
-    </Compile>
-    <Compile Include="System\Diagnostics\Debug.Mono.cs" />
-    <Compile Include="..\..\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs">
-      <Link>Common\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs">
-      <Link>Common\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\System\SR.cs">
-      <Link>Common\System\SR.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\System\Collections\Generic\ArrayBuilder.cs">
-      <Link>Common\System\Collections\Generic\ArrayBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs">
-      <Link>Common\System\Collections\Generic\LowLevelDictionary.cs</Link>
-    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Private.Uri -->
+    <Compile Include="System\Uri.Mono.cs" />
     <Compile Include="..\..\src\System.Private.Uri\src\System\DomainNameHelper.cs">
       <Link>System\DomainNameHelper.cs</Link>
     </Compile>
@@ -110,6 +103,9 @@
     </Compile>
     <Compile Include="..\..\src\System.Private.Uri\src\System\Uri.cs">
       <Link>System\Uri.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Private.Uri\src\System\Uri.Unix.cs">
+      <Link>System\Uri.Unix.cs</Link>
     </Compile>
     <Compile Include="..\..\src\System.Private.Uri\src\System\Uri.Windows.cs">
       <Link>System\Uri.Windows.cs</Link>
@@ -144,6 +140,59 @@
     <Compile Include="..\..\src\System.Private.Uri\src\System\UriSyntax.cs">
       <Link>System\UriSyntax.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Runtime -->
+    <Compile Include="..\..\src\System.Runtime\src\System\Collections\Generic\ISet.cs">
+      <Link>System\Collections\Generic\ISet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\System.Runtime\src\System\ComponentModel\DefaultValueAttribute.cs">
+      <Link>System\ComponentModel\DefaultValueAttribute.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- System.Runtime.Extensions -->
+    <Compile Include="..\..\src\System.Runtime.Extensions\src\System\Diagnostics\Stopwatch.cs">
+      <Link>System\Diagnostics\Stopwatch.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Common -->
+    <Compile Include="Common\System\PlatformHelper.cs" />
+    <Compile Include="Common\System\SR.Strings.cs" />
+    <Compile Include="..\..\src\Common\src\System\SR.cs">
+      <Link>Common\System\SR.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\ArrayBuilder.cs">
+      <Link>Common\System\Collections\Generic\ArrayBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs">
+      <Link>Common\System\Collections\Generic\EnumerableHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs">
+      <Link>Common\System\Collections\Generic\LargeArrayBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs">
+      <Link>Common\System\Collections\Generic\LowLevelDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.cs">
+      <Link>System\Diagnostics\Debug.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.Unix.cs">
+      <Link>System\Diagnostics\Debug.Unix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\System\Diagnostics\Debug.Windows.cs">
+      <Link>System\Diagnostics\Debug.Windows.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.Errors.cs">
+      <Link>Common\Interop\Unix\Interop.Errors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.IOErrors.cs">
+      <Link>Common\Interop\Unix\Interop.IOErrors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Interop\Unix\Interop.Libraries.cs">
+      <Link>Common\Interop\Unix\Interop.Libraries.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs">
       <Link>Common\Interop\Unix\System.Native\Interop.Close.cs</Link>
     </Compile>
@@ -171,19 +220,24 @@
     <Compile Include="..\..\src\Common\src\Interop\Unix\System.Native\Interop.Write.cs">
       <Link>Common\Interop\Unix\System.Native\Interop.Write.cs</Link>
     </Compile>
-    <Compile Include="System\Uri.Mono.cs" />
-    <Compile Include="Common\System\PlatformHelper.cs" />
-    <Compile Include="..\..\src\System.Private.Uri\src\System\Uri.Unix.cs">
-      <Link>System\Uri.Unix.cs</Link>
+    <Compile Include="..\..\src\Common\src\Interop\Windows\Interop.Libraries.cs">
+      <Link>Common\Interop\Windows\Interop.Libraries.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\Collections\Generic\ISet.cs">
-      <Link>System\Collections\Generic\ISet.cs</Link>
+    <Compile Include="..\..\src\Common\src\Interop\Windows\kernel32\Interop.OutputDebugString.cs">
+      <Link>Common\Interop\Windows\kernel32\Interop.OutputDebugString.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\System.Runtime\src\System\ComponentModel\DefaultValueAttribute.cs">
-      <Link>System\ComponentModel\DefaultValueAttribute.cs</Link>
+    <Compile Include="..\..\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs">
+      <Link>Common\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs">
+      <Link>Common\Microsoft\Win32\SafeHandles\SafeFileHandleHelper.Unix.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="mscorlib.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>mscorlib</Name>
+    </ProjectReference>
     <Reference Include="System.Private.CoreLib">
       <HintPath>System.Private.CoreLib.dll</HintPath>
       <Private>False</Private>

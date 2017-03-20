@@ -6,7 +6,7 @@ namespace System
 {
 	internal static partial class PlatformHelper
 	{
-		public static readonly bool IsUnix = Environment.OSVersion.Platform == PlatformID.Unix;
-		public static readonly bool IsWindows = Environment.OSVersion.Platform != PlatformID.Unix;
+		public static readonly bool IsUnix = true;
+		public static readonly bool IsWindows = false;
 	}
 }
