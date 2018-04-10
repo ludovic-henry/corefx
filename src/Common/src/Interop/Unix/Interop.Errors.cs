@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 internal static partial class Interop
@@ -181,13 +182,25 @@ internal static partial class Interop
             return Marshal.PtrToStringAnsi((IntPtr)message);
         }
 
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+#else
         [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_ConvertErrorPlatformToPal")]
+#endif
         internal static extern Error ConvertErrorPlatformToPal(int platformErrno);
 
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+#else
         [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_ConvertErrorPalToPlatform")]
+#endif
         internal static extern int ConvertErrorPalToPlatform(Error error);
 
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+#else
         [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_StrErrorR")]
+#endif
         private static extern unsafe byte* StrErrorR(int platformErrno, byte* buffer, int bufferSize);
     }
 }

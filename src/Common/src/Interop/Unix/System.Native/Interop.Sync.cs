@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 internal static partial class Interop
@@ -12,7 +13,11 @@ internal static partial class Interop
         /// <summary>
         /// Forces a write of all modified I/O buffers to their storage mediums.
         /// </summary>
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+#else
         [DllImport(Libraries.SystemNative, EntryPoint = "SystemNative_Sync")]
+#endif
         internal static extern void Sync();
     }
 }
