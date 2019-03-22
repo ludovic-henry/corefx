@@ -26,7 +26,7 @@ namespace System.Threading
 {
     internal static class ThreadPoolGlobals
     {
-        public static readonly int processorCount = Environment.ProcessorCount;
+        public static readonly int processorCount = Math.Max ((int) (Environment.ProcessorCount * Environment.ProcessorQuota), 1);
 
         public static volatile bool threadPoolInitialized;
         public static bool enableWorkerTracking;

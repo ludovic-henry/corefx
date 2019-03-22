@@ -1050,7 +1050,7 @@ namespace System.Threading.Tasks
 
             // initialize ranges with passed in loop arguments and expected number of workers
             int numExpectedWorkers = (parallelOptions.EffectiveMaxConcurrencyLevel == -1) ?
-                PlatformHelper.ProcessorCount :
+                Math.Max ((int) (PlatformHelper.ProcessorCount * Environment.ProcessorQuota), 1) :
                 parallelOptions.EffectiveMaxConcurrencyLevel;
             RangeManager rangeManager = new RangeManager(fromInclusive, toExclusive, 1, numExpectedWorkers);
 
@@ -1312,7 +1312,7 @@ namespace System.Threading.Tasks
 
             // initialize ranges with passed in loop arguments and expected number of workers
             int numExpectedWorkers = (parallelOptions.EffectiveMaxConcurrencyLevel == -1) ?
-                PlatformHelper.ProcessorCount :
+                Math.Max ((int) (PlatformHelper.ProcessorCount * Environment.ProcessorQuota), 1) :
                 parallelOptions.EffectiveMaxConcurrencyLevel;
             RangeManager rangeManager = new RangeManager(fromInclusive, toExclusive, 1, numExpectedWorkers);
 

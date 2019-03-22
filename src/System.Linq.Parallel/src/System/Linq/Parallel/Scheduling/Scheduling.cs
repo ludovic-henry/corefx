@@ -33,7 +33,7 @@ namespace System.Linq.Parallel
 
         // The default degree of parallelism, or -1 if unspecified. Dev unit tests set this value
         // to change the default DOP.
-        internal static int DefaultDegreeOfParallelism = Math.Min(Environment.ProcessorCount, MAX_SUPPORTED_DOP);
+        internal static int DefaultDegreeOfParallelism = Math.Clamp((int) (Environment.ProcessorCount * Environment.ProcessorQuota), 1, MAX_SUPPORTED_DOP);
 
         // The size to use for bounded buffers. 
         internal const int DEFAULT_BOUNDED_BUFFER_CAPACITY = 512;
